@@ -1,0 +1,701 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Resume Analyzer</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .header {
+            text-align: center;
+            color: white;
+            margin-bottom: 40px;
+            animation: fadeIn 0.6s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .header h1 {
+            font-size: 3em;
+            margin-bottom: 10px;
+        }
+
+        .header p {
+            font-size: 1.2em;
+            opacity: 0.95;
+        }
+
+        .upload-section {
+            background: white;
+            border-radius: 20px;
+            padding: 50px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.2);
+            margin-bottom: 40px;
+            animation: slideUp 0.6s ease;
+        }
+
+        @keyframes slideUp {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .upload-area {
+            border: 3px dashed #f093fb;
+            border-radius: 15px;
+            padding: 60px 40px;
+            text-align: center;
+            background: #fef5ff;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .upload-area:hover {
+            border-color: #f5576c;
+            background: #ffe8f5;
+            transform: translateY(-5px);
+        }
+
+        .upload-area.dragover {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            border-color: white;
+        }
+
+        .upload-area.dragover * {
+            color: white;
+        }
+
+        .upload-icon {
+            font-size: 4em;
+            margin-bottom: 20px;
+            color: #f5576c;
+        }
+
+        .upload-area h3 {
+            color: #333;
+            font-size: 1.5em;
+            margin-bottom: 10px;
+        }
+
+        .upload-area p {
+            color: #666;
+            margin-bottom: 20px;
+        }
+
+        .file-input {
+            display: none;
+        }
+
+        .choose-file-btn {
+            padding: 15px 40px;
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            color: white;
+            border: none;
+            border-radius: 50px;
+            font-size: 1.1em;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 10px 30px rgba(245, 87, 108, 0.3);
+        }
+
+        .choose-file-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 15px 40px rgba(245, 87, 108, 0.4);
+        }
+
+        .file-info {
+            display: none;
+            margin-top: 20px;
+            padding: 20px;
+            background: #e8f5e9;
+            border-radius: 10px;
+            border-left: 4px solid #4caf50;
+        }
+
+        .file-info.active {
+            display: block;
+        }
+
+        .file-details {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .file-icon {
+            font-size: 2em;
+        }
+
+        .file-name {
+            flex: 1;
+            font-weight: 600;
+            color: #333;
+        }
+
+        .remove-file {
+            background: #f44336;
+            color: white;
+            border: none;
+            padding: 8px 20px;
+            border-radius: 20px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+        .remove-file:hover {
+            background: #d32f2f;
+        }
+
+        .analyze-btn {
+            display: block;
+            width: 100%;
+            max-width: 400px;
+            margin: 30px auto 0;
+            padding: 18px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 50px;
+            font-size: 1.2em;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 10px 30px rgba(102, 126, 234, 0.3);
+        }
+
+        .analyze-btn:hover:not(:disabled) {
+            transform: translateY(-3px);
+            box-shadow: 0 15px 40px rgba(102, 126, 234, 0.4);
+        }
+
+        .analyze-btn:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .results-section {
+            display: none;
+            background: white;
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.2);
+            animation: slideUp 0.6s ease;
+        }
+
+        .results-section.active {
+            display: block;
+        }
+
+        .results-header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        .results-header h2 {
+            color: #333;
+            font-size: 2em;
+            margin-bottom: 10px;
+        }
+
+        .score-display {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 30px;
+            margin: 30px 0;
+        }
+
+        .score-circle {
+            width: 180px;
+            height: 180px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            box-shadow: 0 10px 30px rgba(245, 87, 108, 0.4);
+        }
+
+        .score-number {
+            font-size: 3.5em;
+            font-weight: 700;
+        }
+
+        .score-label {
+            font-size: 1em;
+            opacity: 0.9;
+        }
+
+        .analysis-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+            margin-top: 40px;
+        }
+
+        .analysis-card {
+            background: #f8f9ff;
+            border-radius: 15px;
+            padding: 30px;
+            border-left: 5px solid #667eea;
+            transition: all 0.3s ease;
+        }
+
+        .analysis-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        }
+
+        .analysis-card.strengths {
+            border-left-color: #4caf50;
+            background: linear-gradient(135deg, #e8f5e9 0%, #f1f8f4 100%);
+        }
+
+        .analysis-card.improvements {
+            border-left-color: #ff9800;
+            background: linear-gradient(135deg, #fff4e6 0%, #fef8f1 100%);
+        }
+
+        .analysis-card.keywords {
+            border-left-color: #2196f3;
+            background: linear-gradient(135deg, #e3f2fd 0%, #f1f8fe 100%);
+        }
+
+        .analysis-card.formatting {
+            border-left-color: #9c27b0;
+            background: linear-gradient(135deg, #f3e5f5 0%, #f9f5fa 100%);
+        }
+
+        .card-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 20px;
+        }
+
+        .card-icon {
+            font-size: 2em;
+        }
+
+        .card-title {
+            font-size: 1.3em;
+            font-weight: 600;
+            color: #333;
+        }
+
+        .card-content ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        .card-content li {
+            padding: 12px 0;
+            color: #555;
+            line-height: 1.6;
+            border-bottom: 1px solid rgba(0,0,0,0.05);
+            display: flex;
+            align-items: start;
+            gap: 10px;
+        }
+
+        .card-content li:last-child {
+            border-bottom: none;
+        }
+
+        .card-content li:before {
+            content: "•";
+            color: inherit;
+            font-weight: bold;
+            font-size: 1.5em;
+            line-height: 0.8;
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 20px;
+            justify-content: center;
+            margin-top: 40px;
+            flex-wrap: wrap;
+        }
+
+        .action-btn {
+            padding: 15px 40px;
+            border: none;
+            border-radius: 50px;
+            font-size: 1.1em;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            box-shadow: 0 10px 30px rgba(102, 126, 234, 0.3);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 15px 40px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn-secondary {
+            background: white;
+            color: #667eea;
+            border: 2px solid #667eea;
+        }
+
+        .btn-secondary:hover {
+            background: #f8f9ff;
+        }
+
+        .loading-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.8);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .loading-overlay.active {
+            display: flex;
+        }
+
+        .loading-content {
+            text-align: center;
+            color: white;
+        }
+
+        .spinner {
+            width: 60px;
+            height: 60px;
+            border: 5px solid rgba(255,255,255,0.3);
+            border-radius: 50%;
+            border-top-color: #fff;
+            animation: spin 1s ease-in-out infinite;
+            margin: 0 auto 20px;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        .loading-text {
+            font-size: 1.3em;
+            font-weight: 600;
+        }
+
+        @media (max-width: 768px) {
+            .header h1 {
+                font-size: 2em;
+            }
+
+            .upload-section {
+                padding: 30px 20px;
+            }
+
+            .upload-area {
+                padding: 40px 20px;
+            }
+
+            .score-circle {
+                width: 140px;
+                height: 140px;
+            }
+
+            .score-number {
+                font-size: 2.5em;
+            }
+
+            .analysis-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🔍 AI Resume Analyzer</h1>
+            <p>Get instant feedback and improve your resume with AI-powered insights</p>
+        </div>
+
+        <div class="upload-section">
+            <div class="upload-area" id="uploadArea">
+                <div class="upload-icon">📄</div>
+                <h3>Upload Your Resume</h3>
+                <p>Drag and drop your resume here, or click to browse</p>
+                <p style="font-size: 0.9em; color: #999;">Supported formats: PDF, DOC, DOCX (Max 5MB)</p>
+                <button class="choose-file-btn" onclick="document.getElementById('fileInput').click()">
+                    Choose File
+                </button>
+                <input type="file" id="fileInput" class="file-input" accept=".pdf,.doc,.docx">
+            </div>
+
+            <div class="file-info" id="fileInfo">
+                <div class="file-details">
+                    <span class="file-icon">📎</span>
+                    <span class="file-name" id="fileName"></span>
+                    <button class="remove-file" onclick="removeFile()">Remove</button>
+                </div>
+            </div>
+
+            <button class="analyze-btn" id="analyzeBtn" disabled onclick="analyzeResume()">
+                🚀 Analyze My Resume
+            </button>
+        </div>
+
+        <div class="results-section" id="resultsSection">
+            <div class="results-header">
+                <h2>📊 Analysis Results</h2>
+                <p style="color: #666;">Here's what we found about your resume</p>
+            </div>
+
+            <div class="score-display">
+                <div class="score-circle">
+                    <div class="score-number" id="scoreNumber">0</div>
+                    <div class="score-label">/ 10</div>
+                </div>
+                <div style="max-width: 400px; text-align: left;">
+                    <h3 style="color: #333; margin-bottom: 10px;">Overall Score</h3>
+                    <p style="color: #666; line-height: 1.6;">Your resume has been analyzed based on content quality, formatting, keyword optimization, and ATS compatibility.</p>
+                </div>
+            </div>
+
+            <div class="analysis-grid">
+                <div class="analysis-card strengths">
+                    <div class="card-header">
+                        <span class="card-icon">✅</span>
+                        <h3 class="card-title">Strengths</h3>
+                    </div>
+                    <div class="card-content">
+                        <ul id="strengthsList">
+                            <li>Clear and professional formatting</li>
+                            <li>Strong action verbs used throughout</li>
+                            <li>Quantifiable achievements included</li>
+                            <li>Consistent structure and layout</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="analysis-card improvements">
+                    <div class="card-header">
+                        <span class="card-icon">⚡</span>
+                        <h3 class="card-title">Areas to Improve</h3>
+                    </div>
+                    <div class="card-content">
+                        <ul id="improvementsList">
+                            <li>Add more specific metrics and numbers</li>
+                            <li>Include relevant keywords for your industry</li>
+                            <li>Consider adding a professional summary</li>
+                            <li>Expand on technical skills section</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="analysis-card keywords">
+                    <div class="card-header">
+                        <span class="card-icon">🔑</span>
+                        <h3 class="card-title">Keyword Optimization</h3>
+                    </div>
+                    <div class="card-content">
+                        <ul id="keywordsList">
+                            <li>Add industry-specific technical terms</li>
+                            <li>Include relevant soft skills</li>
+                            <li>Use job description keywords</li>
+                            <li>Optimize for ATS scanning</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="analysis-card formatting">
+                    <div class="card-header">
+                        <span class="card-icon">🎨</span>
+                        <h3 class="card-title">Formatting Feedback</h3>
+                    </div>
+                    <div class="card-content">
+                        <ul id="formattingList">
+                            <li>Font choice is professional and readable</li>
+                            <li>Good use of white space</li>
+                            <li>Sections are well-organized</li>
+                            <li>Consider using bullet points consistently</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <div class="action-buttons">
+                <a href="/" class="action-btn btn-primary">
+                    📝 Create New Resume
+                </a>
+                <button class="action-btn btn-secondary" onclick="analyzeAgain()">
+                    🔄 Analyze Another Resume
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <div class="loading-overlay" id="loadingOverlay">
+        <div class="loading-content">
+            <div class="spinner"></div>
+            <div class="loading-text">Analyzing your resume...</div>
+            <p style="margin-top: 10px; opacity: 0.8;">This may take a few moments</p>
+        </div>
+    </div>
+
+    <script>
+        let selectedFile = null;
+        const uploadArea = document.getElementById('uploadArea');
+        const fileInput = document.getElementById('fileInput');
+
+        // Drag and drop functionality
+        uploadArea.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            uploadArea.classList.add('dragover');
+        });
+
+        uploadArea.addEventListener('dragleave', () => {
+            uploadArea.classList.remove('dragover');
+        });
+
+        uploadArea.addEventListener('drop', (e) => {
+            e.preventDefault();
+            uploadArea.classList.remove('dragover');
+            
+            const files = e.dataTransfer.files;
+            if (files.length > 0) {
+                handleFileSelect(files[0]);
+            }
+        });
+
+        // File input change
+        fileInput.addEventListener('change', (e) => {
+            if (e.target.files.length > 0) {
+                handleFileSelect(e.target.files[0]);
+            }
+        });
+
+        function handleFileSelect(file) {
+            const validTypes = ['application/pdf', 'application/msword', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'];
+            const maxSize = 5 * 1024 * 1024; // 5MB
+
+            if (!validTypes.includes(file.type)) {
+                alert('Please upload a PDF or Word document');
+                return;
+            }
+
+            if (file.size > maxSize) {
+                alert('File size should be less than 5MB');
+                return;
+            }
+
+            selectedFile = file;
+            document.getElementById('fileName').textContent = file.name;
+            document.getElementById('fileInfo').classList.add('active');
+            document.getElementById('analyzeBtn').disabled = false;
+        }
+
+        function removeFile() {
+            selectedFile = null;
+            fileInput.value = '';
+            document.getElementById('fileInfo').classList.remove('active');
+            document.getElementById('analyzeBtn').disabled = true;
+        }
+
+        async function analyzeResume() {
+            if (!selectedFile) return;
+
+            const loadingOverlay = document.getElementById('loadingOverlay');
+            loadingOverlay.classList.add('active');
+
+            const formData = new FormData();
+            formData.append('resume_file', selectedFile);
+
+            try {
+                const response = await fetch('/analyze', {
+                    method: 'POST',
+                    body: formData
+                });
+
+                const data = await response.json();
+                
+                if (data.success) {
+                    displayResults(data.analysis);
+                } else {
+                    alert('Error analyzing resume: ' + data.error);
+                }
+            } catch (error) {
+                alert('Failed to analyze resume. Please try again.');
+                console.error('Error:', error);
+            } finally {
+                loadingOverlay.classList.remove('active');
+            }
+        }
+
+        function displayResults(analysis) {
+            // Simulate score animation
+            const scoreElement = document.getElementById('scoreNumber');
+            let score = 0;
+            const targetScore = 8; // This would come from the API
+            
+            const interval = setInterval(() => {
+                if (score < targetScore) {
+                    score += 0.1;
+                    scoreElement.textContent = score.toFixed(1);
+                } else {
+                    scoreElement.textContent = targetScore;
+                    clearInterval(interval);
+                }
+            }, 30);
+
+            // Show results section
+            document.getElementById('resultsSection').classList.add('active');
+            
+            // Scroll to results
+            document.getElementById('resultsSection').scrollIntoView({ behavior: 'smooth' });
+
+            // Parse and display AI analysis (you would parse the actual AI response here)
+            // This is a placeholder implementation
+        }
+
+        function analyzeAgain() {
+            document.getElementById('resultsSection').classList.remove('active');
+            removeFile();
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+    </script>
+</body>
+</html>

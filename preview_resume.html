@@ -1,0 +1,833 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Preview & Edit Resume</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #f5f7fa;
+            display: flex;
+            min-height: 100vh;
+        }
+
+        .toolbar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            background: white;
+            padding: 15px 30px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            z-index: 100;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .toolbar-left h2 {
+            color: #667eea;
+            font-size: 1.5em;
+        }
+
+        .toolbar-actions {
+            display: flex;
+            gap: 15px;
+        }
+
+        .toolbar-btn {
+            padding: 10px 24px;
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 0.95em;
+        }
+
+        .btn-spell {
+            background: #fff;
+            color: #667eea;
+            border: 2px solid #667eea;
+        }
+
+        .btn-spell:hover {
+            background: #f8f9ff;
+        }
+
+        .btn-template {
+            background: #f093fb;
+            color: white;
+        }
+
+        .btn-template:hover {
+            background: #e082ea;
+            transform: translateY(-2px);
+        }
+
+        .btn-download {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .btn-download:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        .sidebar {
+            width: 300px;
+            background: white;
+            padding: 90px 20px 30px 20px;
+            box-shadow: 4px 0 20px rgba(0,0,0,0.08);
+            position: fixed;
+            height: 100vh;
+            overflow-y: auto;
+        }
+
+        .sidebar h3 {
+            color: #333;
+            margin-bottom: 20px;
+            font-size: 1.2em;
+        }
+
+        .sidebar-section {
+            margin-bottom: 30px;
+        }
+
+        .edit-option {
+            padding: 15px;
+            background: #f8f9ff;
+            border-radius: 10px;
+            margin-bottom: 10px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: 2px solid transparent;
+        }
+
+        .edit-option:hover {
+            background: #e8ebff;
+            border-color: #667eea;
+        }
+
+        .edit-option.active {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border-color: #667eea;
+        }
+
+        .color-picker-section {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 10px;
+        }
+
+        .color-swatch {
+            width: 100%;
+            aspect-ratio: 1;
+            border-radius: 8px;
+            cursor: pointer;
+            border: 3px solid transparent;
+            transition: all 0.3s ease;
+        }
+
+        .color-swatch:hover {
+            transform: scale(1.1);
+        }
+
+        .color-swatch.selected {
+            border-color: #333;
+            box-shadow: 0 0 0 2px white, 0 0 0 5px #333;
+        }
+
+        .template-thumbnails {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+        }
+
+        .template-thumb {
+            aspect-ratio: 0.7;
+            background: linear-gradient(135deg, #f8f9ff 0%, #e8ebff 100%);
+            border-radius: 8px;
+            cursor: pointer;
+            border: 3px solid transparent;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2em;
+        }
+
+        .template-thumb:hover {
+            border-color: #667eea;
+            transform: translateY(-3px);
+        }
+
+        .template-thumb.active {
+            border-color: #667eea;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .main-preview {
+            margin-left: 300px;
+            flex: 1;
+            padding: 90px 40px 40px 40px;
+            display: flex;
+            justify-content: center;
+        }
+
+        .resume-container {
+            width: 210mm;
+            min-height: 297mm;
+            background: white;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.15);
+            padding: 40px;
+            position: relative;
+        }
+
+        .resume-header {
+            text-align: center;
+            padding-bottom: 30px;
+            border-bottom: 3px solid #667eea;
+            margin-bottom: 30px;
+        }
+
+        .resume-header h1 {
+            color: #2c3e50;
+            font-size: 2.5em;
+            margin-bottom: 10px;
+        }
+
+        .resume-header .title {
+            color: #667eea;
+            font-size: 1.3em;
+            font-weight: 600;
+            margin-bottom: 15px;
+        }
+
+        .contact-info {
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 20px;
+            font-size: 0.95em;
+            color: #555;
+        }
+
+        .contact-item {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .resume-section {
+            margin-bottom: 30px;
+        }
+
+        .section-title {
+            color: #2c3e50;
+            font-size: 1.5em;
+            font-weight: 700;
+            margin-bottom: 15px;
+            padding-bottom: 8px;
+            border-bottom: 2px solid #667eea;
+        }
+
+        .summary-text {
+            color: #555;
+            line-height: 1.8;
+            text-align: justify;
+        }
+
+        .experience-item,
+        .education-item {
+            margin-bottom: 20px;
+            position: relative;
+        }
+
+        .item-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: start;
+            margin-bottom: 10px;
+        }
+
+        .item-title {
+            font-weight: 700;
+            color: #2c3e50;
+            font-size: 1.1em;
+        }
+
+        .item-subtitle {
+            color: #667eea;
+            font-weight: 600;
+            margin-top: 3px;
+        }
+
+        .item-date {
+            color: #888;
+            font-size: 0.9em;
+            white-space: nowrap;
+        }
+
+        .item-description {
+            color: #555;
+            line-height: 1.7;
+        }
+
+        .item-description ul {
+            margin-left: 20px;
+            margin-top: 8px;
+        }
+
+        .item-description li {
+            margin-bottom: 5px;
+        }
+
+        .skills-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+        }
+
+        .skill-item {
+            background: #f8f9ff;
+            padding: 10px 15px;
+            border-radius: 8px;
+            color: #667eea;
+            font-weight: 600;
+            text-align: center;
+            border: 2px solid #e8ebff;
+        }
+
+        .editable {
+            position: relative;
+            cursor: text;
+            transition: all 0.3s ease;
+            padding: 5px;
+            border-radius: 4px;
+        }
+
+        .editable:hover {
+            background: #fff9e6;
+            outline: 2px dashed #ffc107;
+        }
+
+        .editable:focus {
+            outline: 2px solid #667eea;
+            background: white;
+        }
+
+        .zoom-controls {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            background: white;
+            padding: 15px;
+            border-radius: 50px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            display: flex;
+            gap: 10px;
+            z-index: 50;
+        }
+
+        .zoom-btn {
+            width: 40px;
+            height: 40px;
+            border: none;
+            border-radius: 50%;
+            background: #667eea;
+            color: white;
+            font-size: 1.2em;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .zoom-btn:hover {
+            background: #5568d3;
+            transform: scale(1.1);
+        }
+
+        .zoom-level {
+            display: flex;
+            align-items: center;
+            padding: 0 15px;
+            font-weight: 600;
+            color: #667eea;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.7);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal.active {
+            display: flex;
+        }
+
+        .modal-content {
+            background: white;
+            border-radius: 20px;
+            padding: 40px;
+            max-width: 500px;
+            width: 90%;
+            animation: modalSlide 0.3s ease;
+        }
+
+        @keyframes modalSlide {
+            from {
+                opacity: 0;
+                transform: scale(0.9);
+            }
+            to {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+
+        .modal h3 {
+            color: #333;
+            margin-bottom: 20px;
+        }
+
+        .modal-buttons {
+            display: flex;
+            gap: 15px;
+            margin-top: 30px;
+        }
+
+        .modal-btn {
+            flex: 1;
+            padding: 12px;
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .btn-secondary {
+            background: #f0f0f0;
+            color: #333;
+        }
+
+        .download-options {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .download-option {
+            padding: 20px;
+            background: #f8f9ff;
+            border: 2px solid #e8ebff;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .download-option:hover {
+            border-color: #667eea;
+            background: #e8ebff;
+        }
+
+        .download-icon {
+            font-size: 2em;
+        }
+
+        .download-info h4 {
+            color: #333;
+            margin-bottom: 5px;
+        }
+
+        .download-info p {
+            color: #666;
+            font-size: 0.9em;
+        }
+
+        @media (max-width: 1400px) {
+            .resume-container {
+                transform: scale(0.85);
+                transform-origin: top center;
+            }
+        }
+
+        @media (max-width: 1024px) {
+            .sidebar {
+                width: 100%;
+                position: relative;
+                height: auto;
+                padding: 20px;
+            }
+
+            .main-preview {
+                margin-left: 0;
+                padding: 20px;
+            }
+
+            .toolbar {
+                flex-direction: column;
+                gap: 15px;
+                padding: 15px;
+            }
+
+            .toolbar-actions {
+                width: 100%;
+                justify-content: center;
+            }
+
+            .resume-container {
+                transform: scale(0.7);
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="toolbar">
+        <div class="toolbar-left">
+            <h2>📄 Resume Preview</h2>
+        </div>
+        <div class="toolbar-actions">
+            <button class="toolbar-btn btn-spell" onclick="runSpellCheck()">✓ Spell Check</button>
+            <button class="toolbar-btn btn-template" onclick="changeTemplate()">🎨 Change Template</button>
+            <button class="toolbar-btn btn-download" onclick="openDownloadModal()">📥 Download</button>
+        </div>
+    </div>
+
+    <aside class="sidebar">
+        <div class="sidebar-section">
+            <h3>🎨 Customize Colors</h3>
+            <div class="color-picker-section">
+                <div class="color-swatch selected" style="background: #667eea;" data-color="#667eea"></div>
+                <div class="color-swatch" style="background: #2c3e50;" data-color="#2c3e50"></div>
+                <div class="color-swatch" style="background: #16a085;" data-color="#16a085"></div>
+                <div class="color-swatch" style="background: #e74c3c;" data-color="#e74c3c"></div>
+                <div class="color-swatch" style="background: #f39c12;" data-color="#f39c12"></div>
+                <div class="color-swatch" style="background: #9b59b6;" data-color="#9b59b6"></div>
+                <div class="color-swatch" style="background: #3498db;" data-color="#3498db"></div>
+                <div class="color-swatch" style="background: #1abc9c;" data-color="#1abc9c"></div>
+            </div>
+        </div>
+
+        <div class="sidebar-section">
+            <h3>📋 Edit Sections</h3>
+            <div class="edit-option" onclick="scrollToSection('header')">
+                👤 Personal Information
+            </div>
+            <div class="edit-option" onclick="scrollToSection('summary')">
+                📝 Professional Summary
+            </div>
+            <div class="edit-option" onclick="scrollToSection('experience')">
+                💼 Work Experience
+            </div>
+            <div class="edit-option" onclick="scrollToSection('education')">
+                🎓 Education
+            </div>
+            <div class="edit-option" onclick="scrollToSection('skills')">
+                🎯 Skills
+            </div>
+        </div>
+
+        <div class="sidebar-section">
+            <h3>💡 Quick Actions</h3>
+            <div class="edit-option" onclick="addSection()">
+                ➕ Add Section
+            </div>
+            <div class="edit-option" onclick="resetResume()">
+                🔄 Reset Changes
+            </div>
+        </div>
+    </aside>
+
+    <main class="main-preview">
+        <div class="resume-container" id="resumeContainer">
+            <div class="resume-header" id="header">
+                <h1 class="editable" contenteditable="true">{{ resume_data.heading.first_name }} {{ resume_data.heading.last_name }}</h1>
+                <div class="title editable" contenteditable="true">{{ resume_data.heading.profession }}</div>
+                <div class="contact-info">
+                    <span class="contact-item">📧 {{ resume_data.heading.email }}</span>
+                    <span class="contact-item">📱 {{ resume_data.heading.phone }}</span>
+                    <span class="contact-item">📍 {{ resume_data.heading.city }}, {{ resume_data.heading.country }}</span>
+                    <span class="contact-item">🔗 linkedin.com/in/johndoe</span>
+                </div>
+            </div>
+
+            <div class="resume-section" id="summary">
+                <h2 class="section-title">Professional Summary</h2>
+                <p class="summary-text editable" contenteditable="true">
+                    Results-driven Software Engineer with 5+ years of experience in developing scalable web applications. 
+                    Proficient in full-stack development with expertise in React, Node.js, and cloud technologies. 
+                    Proven track record of delivering high-quality solutions that improve user experience and drive business growth.
+                </p>
+            </div>
+
+            <div class="resume-section" id="experience">
+                <h2 class="section-title">Work Experience</h2>
+                {% if resume_data.experience %}
+                    {% for job in resume_data.experience %}  
+                
+                    <div class="experience-item">
+                        <div class="item-header">
+                            <div>
+                                <div class="item-title editable" contenteditable="true">{{ job.position }}</div>
+                                <div class="item-subtitle editable" contenteditable="true">{{ job.company }}</div>
+                            </div>
+                            <div class="item-date">{{ job.start_date }} - {{ job.end_date if not job.currently_work else 'Present' }}</div>
+                        </div>
+                        <div class="item-description editable" contenteditable="true">
+                            {{ job.description | safe }}
+                        </div>
+                    </div>
+            {% endfor %}
+        {% else %}
+            <p>No experience added yet.</p>
+        {% endif %}
+    </div>
+
+                <div class="experience-item">
+                    <div class="item-header">
+                        <div>
+                            <div class="item-title editable" contenteditable="true">Software Developer</div>
+                            <div class="item-subtitle editable" contenteditable="true">Digital Innovations Ltd.</div>
+                        </div>
+                        <div class="item-date editable" contenteditable="true">Jun 2019 - Dec 2020</div>
+                    </div>
+                    <div class="item-description editable" contenteditable="true">
+                        <ul>
+                            <li>Developed and maintained 15+ client-facing web applications</li>
+                            <li>Collaborated with UX team to implement responsive designs</li>
+                            <li>Integrated third-party APIs and payment gateways</li>
+                            <li>Reduced bug rate by 35% through comprehensive testing practices</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <div class="resume-section" id="education">
+                <h2 class="section-title">Education</h2>
+                {% for edu in resume_data.education %}
+                    {% for edu in resume_data.education %}
+                
+                    <div class="education-item">
+                        <div class="item-header">
+                            <div>
+                                <div class="item-title editable" contenteditable="true">{{ edu.degree }}</div>
+                                <div class="item-subtitle editable" contenteditable="true">{{ edu.school }}, {{ edu.city }}</div>
+                            </div>
+                            <div class="item-date">{{ edu.graduation_date }}</div>
+                        </div>
+                        <div class="item-description editable" contenteditable="true">
+                            GPA: 3.8/4.0 | Dean's List | Relevant Coursework: Data Structures, Algorithms, Web Development
+                        </div>
+                    </div>
+                    {% endfor %}
+                {% else %}
+                    <p>No education added yet.</p>
+                {% endif %}
+            </div>
+
+            <div class="resume-section" id="skills">
+                <h2 class="section-title">Technical Skills</h2>
+                <div class="skills-grid">
+                    {% for skill in resume_data.skills %}
+                        {% for skill in resume_data.skills %}
+                        <div class="skill-item editable" contenteditable="true">{{ skill }}</div>
+                        {% endfor %}
+                    {% else %}
+                        <p>No skills added yet.</p>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <div class="zoom-controls">
+        <button class="zoom-btn" onclick="zoomOut()">−</button>
+        <span class="zoom-level" id="zoomLevel">100%</span>
+        <button class="zoom-btn" onclick="zoomIn()">+</button>
+    </div>
+
+    <!-- Download Modal -->
+    <div class="modal" id="downloadModal">
+        <div class="modal-content">
+            <h3>📥 Download Resume</h3>
+            <p style="color: #666; margin-bottom: 20px;">Choose your preferred format</p>
+            
+            <div class="download-options">
+                <div class="download-option" onclick="downloadFormat('pdf')">
+                    <span class="download-icon">📄</span>
+                    <div class="download-info">
+                        <h4>PDF Format</h4>
+                        <p>Best for job applications and printing</p>
+                    </div>
+                </div>
+                <div class="download-option" onclick="downloadFormat('word')">
+                    <span class="download-icon">📝</span>
+                    <div class="download-info">
+                        <h4>Word Document</h4>
+                        <p>Easy to edit and customize further</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="modal-buttons">
+                <button class="modal-btn btn-secondary" onclick="closeModal()">Cancel</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let currentZoom = 1;
+        let currentColor = '#667eea';
+
+        // Color picker functionality
+        document.querySelectorAll('.color-swatch').forEach(swatch => {
+            swatch.addEventListener('click', function() {
+                document.querySelectorAll('.color-swatch').forEach(s => s.classList.remove('selected'));
+                this.classList.add('selected');
+                currentColor = this.dataset.color;
+                applyColor(currentColor);
+            });
+        });
+
+        function applyColor(color) {
+            document.querySelectorAll('.section-title').forEach(el => {
+                el.style.borderColor = color;
+            });
+            document.querySelector('.resume-header').style.borderColor = color;
+            document.querySelector('.title').style.color = color;
+            document.querySelectorAll('.item-subtitle').forEach(el => {
+                el.style.color = color;
+            });
+            document.querySelectorAll('.skill-item').forEach(el => {
+                el.style.color = color;
+                el.style.borderColor = color + '40';
+            });
+        }
+
+        function scrollToSection(sectionId) {
+            const section = document.getElementById(sectionId);
+            section.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            section.style.background = '#fff9e6';
+            setTimeout(() => {
+                section.style.background = 'transparent';
+            }, 2000);
+        }
+
+        function zoomIn() {
+            if (currentZoom < 1.5) {
+                currentZoom += 0.1;
+                applyZoom();
+            }
+        }
+
+        function zoomOut() {
+            if (currentZoom > 0.5) {
+                currentZoom -= 0.1;
+                applyZoom();
+            }
+        }
+
+        function applyZoom() {
+            document.getElementById('resumeContainer').style.transform = `scale(${currentZoom})`;
+            document.getElementById('zoomLevel').textContent = Math.round(currentZoom * 100) + '%';
+        }
+
+        function openDownloadModal() {
+            document.getElementById('downloadModal').classList.add('active');
+        }
+
+        function closeModal() {
+            document.getElementById('downloadModal').classList.remove('active');
+        }
+
+        function downloadFormat(format) {
+            if (format === 'pdf') {
+                window.location.href = '/download-pdf';
+            } else if (format === 'word') {
+                alert('Word download will be implemented with proper library');
+            }
+            closeModal();
+        }
+
+        async function runSpellCheck() {
+            const editables = document.querySelectorAll('.editable');
+            const btn = document.querySelector('.btn-spell');
+            btn.textContent = 'Checking...';
+            
+            for (let el of editables) {
+                const originalText = el.textContent.trim();
+                if (originalText.length > 2) {
+                    try {
+                        const response = await fetch('/spell-check', {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({ text: originalText })
+                        });
+                        
+                        const data = await response.json();
+                        if (data.success) {
+                            el.textContent = data.corrected_text;
+                        }
+                    } catch (error) {
+                        console.error('Error during preview spell-check:', error);
+                    }
+                }
+            }
+            
+            btn.textContent = '✓ Spell Check';
+            alert('Resume content has been polished!');
+        }
+
+        function changeTemplate() {
+            alert('Template change modal will open');
+        }
+
+        function addSection() {
+            alert('Add custom section feature');
+        }
+
+        function resetResume() {
+            if (confirm('Are you sure you want to reset all changes?')) {
+                location.reload();
+            }
+        }
+
+        // Make all editables save on blur
+        document.querySelectorAll('.editable').forEach(el => {
+            el.addEventListener('blur', function() {
+                // Save to session or localStorage
+                console.log('Content saved:', this.textContent);
+            });
+        });
+
+        // Initialize
+        applyColor(currentColor);
+    </script>
+</body>
+</html>

@@ -1,0 +1,779 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - MySmartPortal</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #f5f7fa;
+            display: flex;
+            min-height: 100vh;
+        }
+
+        /* Sidebar */
+        .sidebar {
+            width: 250px;
+            background: #1a1f2e;
+            color: white;
+            position: fixed;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .logo {
+            padding: 20px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+        }
+
+        .logo-icon {
+            width: 32px;
+            height: 32px;
+            background: #4a9eff;
+            border-radius: 6px;
+        }
+
+        .logo-text {
+            font-size: 1.3em;
+            font-weight: 600;
+        }
+
+        .nav-menu {
+            flex: 1;
+            padding: 20px 0;
+        }
+
+        .nav-item {
+            padding: 15px 25px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            color: rgba(255,255,255,0.7);
+            text-decoration: none;
+            border-left: 3px solid transparent;
+        }
+
+        .nav-item:hover {
+            background: rgba(255,255,255,0.05);
+            color: white;
+        }
+
+        .nav-item.active {
+            background: rgba(74, 158, 255, 0.15);
+            color: white;
+            border-left-color: #4a9eff;
+        }
+
+        .nav-icon {
+            font-size: 1.2em;
+        }
+
+        .nav-bottom {
+            border-top: 1px solid rgba(255,255,255,0.1);
+            padding: 20px 0;
+        }
+
+        /* Main Content */
+        .main-content {
+            margin-left: 250px;
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Top Header */
+        .top-header {
+            background: white;
+            padding: 15px 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .search-container {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .menu-toggle {
+            font-size: 1.5em;
+            color: #666;
+            cursor: pointer;
+            display: none;
+        }
+
+        .search-box {
+            padding: 10px 20px;
+            border: 1px solid #e0e0e0;
+            border-radius: 8px;
+            width: 300px;
+            font-size: 0.95em;
+        }
+
+        .search-box:focus {
+            outline: none;
+            border-color: #4a9eff;
+        }
+
+        .user-section {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .icon-btn {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: #f5f7fa;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            position: relative;
+            transition: all 0.3s ease;
+        }
+
+        .icon-btn:hover {
+            background: #e8ebf0;
+        }
+
+        .notification-badge {
+            position: absolute;
+            top: 5px;
+            right: 5px;
+            width: 8px;
+            height: 8px;
+            background: #ff6b6b;
+            border-radius: 50%;
+        }
+
+        .user-profile {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            cursor: pointer;
+        }
+
+        .user-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 600;
+        }
+
+        .user-name {
+            font-weight: 600;
+            color: #2c3e50;
+        }
+
+        /* Dashboard Content */
+        .dashboard-content {
+            padding: 30px;
+        }
+
+        /* Stats Cards */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .stat-card {
+            background: white;
+            padding: 25px;
+            border-radius: 12px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+        }
+
+        .stat-label {
+            color: #7f8c8d;
+            font-size: 0.9em;
+            margin-bottom: 10px;
+        }
+
+        .stat-value {
+            font-size: 2.2em;
+            font-weight: bold;
+            color: #2c3e50;
+        }
+
+        /* Overview Section */
+        .section-card {
+            background: white;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            margin-bottom: 25px;
+        }
+
+        .section-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 20px;
+        }
+
+        .section-icon {
+            font-size: 1.5em;
+        }
+
+        .section-title {
+            font-size: 1.4em;
+            font-weight: 600;
+            color: #2c3e50;
+        }
+
+        .section-subtitle {
+            color: #7f8c8d;
+            margin-bottom: 20px;
+        }
+
+        .overview-list {
+            list-style: none;
+        }
+
+        .overview-item {
+            padding: 10px 0;
+            display: flex;
+            align-items: start;
+            gap: 10px;
+        }
+
+        .overview-item.positive::before {
+            content: '✓';
+            color: #27ae60;
+            font-weight: bold;
+            font-size: 1.2em;
+        }
+
+        .overview-item.negative::before {
+            content: '!';
+            color: #e74c3c;
+            font-weight: bold;
+            font-size: 1.2em;
+        }
+
+        /* Skill Strength */
+        .skill-item {
+            margin-bottom: 20px;
+        }
+
+        .skill-header {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 8px;
+        }
+
+        .skill-name {
+            font-weight: 600;
+            color: #2c3e50;
+        }
+
+        .skill-level {
+            color: #7f8c8d;
+            font-size: 0.9em;
+        }
+
+        .skill-bar {
+            height: 10px;
+            background: #ecf0f1;
+            border-radius: 10px;
+            overflow: hidden;
+        }
+
+        .skill-fill {
+            height: 100%;
+            border-radius: 10px;
+            transition: width 0.5s ease;
+        }
+
+        .skill-fill.excellent {
+            background: linear-gradient(90deg, #4a9eff 0%, #6bb6ff 100%);
+            width: 90%;
+        }
+
+        .skill-fill.moderate {
+            background: linear-gradient(90deg, #2ecc71 0%, #4cd964 100%);
+            width: 60%;
+        }
+
+        .skill-fill.needs-improvement {
+            background: linear-gradient(90deg, #e74c3c 0%, #ff6b6b 100%);
+            width: 35%;
+        }
+
+        /* Resume Preview Section */
+        .resume-preview-section {
+            background: white;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+        }
+
+        .resume-preview-container {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 10px;
+            max-height: 600px;
+            overflow-y: auto;
+        }
+
+        .no-resume {
+            text-align: center;
+            padding: 60px 20px;
+            color: #7f8c8d;
+        }
+
+        .no-resume-icon {
+            font-size: 4em;
+            margin-bottom: 20px;
+            opacity: 0.5;
+        }
+
+        .create-resume-btn {
+            margin-top: 20px;
+            padding: 12px 30px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .create-resume-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        @media (max-width: 1200px) {
+            .stats-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @media (max-width: 768px) {
+            .sidebar {
+                transform: translateX(-100%);
+                transition: transform 0.3s ease;
+            }
+
+            .sidebar.active {
+                transform: translateX(0);
+            }
+
+            .main-content {
+                margin-left: 0;
+            }
+
+            .menu-toggle {
+                display: block;
+            }
+
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .search-box {
+                width: 200px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Sidebar -->
+    <aside class="sidebar" id="sidebar">
+        <div class="logo">
+            <div class="logo-icon"></div>
+            <div class="logo-text">MySmartPortal</div>
+        </div>
+
+        <nav class="nav-menu">
+            <a href="/dashboard" class="nav-item active">
+                <span class="nav-icon">📊</span>
+                <span>Dashboard</span>
+            </a>
+            <a href="/select-experience" class="nav-item">
+                <span class="nav-icon">📝</span>
+                <span>Create Resume</span>
+            </a>
+            <a href="/analyze-resume" class="nav-item">
+                <span class="nav-icon">📈</span>
+                <span>Analyze Skills</span>
+            </a>
+        </nav>
+
+        <div class="nav-bottom">
+            <a href="#" class="nav-item">
+                <span class="nav-icon">ℹ️</span>
+                <span>About</span>
+            </a>
+            <a href="/" class="nav-item">
+                <span class="nav-icon">🚪</span>
+                <span>Logout</span>
+            </a>
+        </div>
+    </aside>
+
+    <!-- Main Content -->
+    <div class="main-content">
+        <!-- Top Header -->
+        <header class="top-header">
+            <div class="search-container">
+                <span class="menu-toggle" onclick="toggleSidebar()">☰</span>
+                <input type="text" class="search-box" placeholder="Search...">
+            </div>
+            <div class="user-section">
+                <div class="icon-btn">
+                    <span>🔔</span>
+                    <span class="notification-badge"></span>
+                </div>
+                <div class="icon-btn">
+                    <span>⚙️</span>
+                </div>
+                <div class="user-profile">
+                    <div class="user-avatar">S</div>
+                    <div class="user-name">srushti</div>
+                </div>
+            </div>
+        </header>
+
+        <!-- Dashboard Content -->
+        <main class="dashboard-content">
+            <!-- Stats Cards -->
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-label">Resume Score</div>
+                    <div class="stat-value" id="resumeScore">0%</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-label">Skills Identified</div>
+                    <div class="stat-value" id="skillsCount">00</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-label">Projects Added</div>
+                    <div class="stat-value" id="projectsCount">00</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-label">Pending Sections</div>
+                    <div class="stat-value" id="pendingSections">06</div>
+                </div>
+            </div>
+
+            <!-- Resume Overview -->
+            <div class="section-card">
+                <div class="section-header">
+                    <span class="section-icon">📄</span>
+                    <h2 class="section-title">Resume Overview</h2>
+                </div>
+                <p class="section-subtitle">Your resume analysis summary based on current details.</p>
+                <ul class="overview-list" id="overviewList">
+                    <li class="overview-item negative">No resume data found. Start creating your resume!</li>
+                </ul>
+            </div>
+
+            <!-- Skill Strength -->
+            <div class="section-card">
+                <div class="section-header">
+                    <span class="section-icon">💪</span>
+                    <h2 class="section-title">Skill Strength</h2>
+                </div>
+                <p class="section-subtitle">Overview of your strongest and weakest skill categories.</p>
+                
+                <div class="skill-item">
+                    <div class="skill-header">
+                        <span class="skill-name">Technical Skills:</span>
+                        <span class="skill-level" id="technicalLevel">Not Available</span>
+                    </div>
+                    <div class="skill-bar">
+                        <div class="skill-fill" id="technicalFill" style="width: 0%"></div>
+                    </div>
+                </div>
+
+                <div class="skill-item">
+                    <div class="skill-header">
+                        <span class="skill-name">Soft Skills:</span>
+                        <span class="skill-level" id="softLevel">Not Available</span>
+                    </div>
+                    <div class="skill-bar">
+                        <div class="skill-fill" id="softFill" style="width: 0%"></div>
+                    </div>
+                </div>
+
+                <div class="skill-item">
+                    <div class="skill-header">
+                        <span class="skill-name">Communication:</span>
+                        <span class="skill-level" id="communicationLevel">Not Available</span>
+                    </div>
+                    <div class="skill-bar">
+                        <div class="skill-fill" id="communicationFill" style="width: 0%"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Resume Preview -->
+            <div class="resume-preview-section">
+                <div class="section-header">
+                    <span class="section-icon">👁️</span>
+                    <h2 class="section-title">Resume Preview</h2>
+                </div>
+                <div class="resume-preview-container" id="resumePreviewContainer">
+                    <div class="no-resume">
+                        <div class="no-resume-icon">📄</div>
+                        <h3>No Resume Created Yet</h3>
+                        <p>Start building your professional resume to see it here</p>
+                        <button class="create-resume-btn" onclick="window.location.href='/select-experience'">
+                            Create Your Resume
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        // Load resume data from session storage
+        function loadResumeData() {
+            const storedData = sessionStorage.getItem('resumeData');
+            if (storedData) {
+                const resumeData = JSON.parse(storedData);
+                updateDashboard(resumeData);
+            } else {
+                // Set default empty state
+                updateDashboard(null);
+            }
+        }
+
+        function updateDashboard(resumeData) {
+            if (!resumeData) {
+                // No data - show defaults
+                document.getElementById('resumeScore').textContent = '0%';
+                document.getElementById('skillsCount').textContent = '00';
+                document.getElementById('projectsCount').textContent = '00';
+                document.getElementById('pendingSections').textContent = '06';
+                return;
+            }
+
+            // Calculate resume score
+            let score = 0;
+            let completedSections = 0;
+            const totalSections = 6;
+
+            // Check each section
+            if (resumeData.personal && resumeData.personal.firstName) {
+                score += 20;
+                completedSections++;
+            }
+            if (resumeData.education && resumeData.education.length > 0) {
+                score += 20;
+                completedSections++;
+            }
+            if (resumeData.experience && resumeData.experience.length > 0) {
+                score += 20;
+                completedSections++;
+            }
+            if (resumeData.skills && resumeData.skills.length > 0) {
+                score += 20;
+                completedSections++;
+            }
+            if (resumeData.summary) {
+                score += 15;
+                completedSections++;
+            }
+            if (resumeData.additional) {
+                score += 5;
+                completedSections++;
+            }
+
+            // Update stats
+            document.getElementById('resumeScore').textContent = score + '%';
+            document.getElementById('skillsCount').textContent = String(resumeData.skills?.length || 0).padStart(2, '0');
+            document.getElementById('projectsCount').textContent = String(resumeData.experience?.length || 0).padStart(2, '0');
+            document.getElementById('pendingSections').textContent = String(totalSections - completedSections).padStart(2, '0');
+
+            // Update overview
+            const overviewList = document.getElementById('overviewList');
+            overviewList.innerHTML = '';
+
+            const overviewItems = [];
+
+            // Positive items
+            if (resumeData.skills && resumeData.skills.length >= 5) {
+                overviewItems.push({ type: 'positive', text: 'Strong skillset in technical and analytical areas' });
+            }
+            if (resumeData.experience && resumeData.experience.length > 0) {
+                overviewItems.push({ type: 'positive', text: 'Good project descriptions with measurable outcomes' });
+            }
+
+            // Negative items
+            if (!resumeData.additional) {
+                overviewItems.push({ type: 'negative', text: 'Add Certifications to improve score' });
+            }
+            if (resumeData.experience && resumeData.experience.length < 2) {
+                overviewItems.push({ type: 'negative', text: 'Add more achievements for better impact' });
+            }
+            if (!resumeData.summary) {
+                overviewItems.push({ type: 'negative', text: 'Add professional summary for better introduction' });
+            }
+
+            overviewItems.forEach(item => {
+                const li = document.createElement('li');
+                li.className = `overview-item ${item.type}`;
+                li.textContent = item.text;
+                overviewList.appendChild(li);
+            });
+
+            // Update skill strength
+            if (resumeData.skills && resumeData.skills.length > 0) {
+                const technicalSkills = ['JavaScript', 'Python', 'Java', 'C++', 'React', 'Node.js', 'SQL', 'AWS', 'Docker'];
+                const softSkills = ['Leadership', 'Teamwork', 'Problem Solving', 'Critical Thinking', 'Time Management'];
+                const communicationSkills = ['Communication', 'Presentation', 'Writing', 'Public Speaking'];
+
+                const userSkills = resumeData.skills.map(s => s.toLowerCase());
+                
+                const techCount = technicalSkills.filter(skill => 
+                    userSkills.some(us => us.includes(skill.toLowerCase()))
+                ).length;
+                
+                const softCount = softSkills.filter(skill => 
+                    userSkills.some(us => us.includes(skill.toLowerCase()))
+                ).length;
+                
+                const commCount = communicationSkills.filter(skill => 
+                    userSkills.some(us => us.includes(skill.toLowerCase()))
+                ).length;
+
+                // Update technical skills
+                const techPercent = Math.min((techCount / technicalSkills.length) * 100, 100);
+                updateSkillBar('technical', techPercent);
+
+                // Update soft skills
+                const softPercent = Math.min((softCount / softSkills.length) * 100, 100);
+                updateSkillBar('soft', softPercent);
+
+                // Update communication
+                const commPercent = Math.min((commCount / communicationSkills.length) * 100, 100);
+                updateSkillBar('communication', commPercent);
+            }
+
+            // Show resume preview
+            displayResumePreview(resumeData);
+        }
+
+        function updateSkillBar(type, percent) {
+            const fill = document.getElementById(`${type}Fill`);
+            const level = document.getElementById(`${type}Level`);
+            
+            fill.style.width = percent + '%';
+            
+            if (percent >= 70) {
+                fill.className = 'skill-fill excellent';
+                level.textContent = 'Excellent';
+            } else if (percent >= 40) {
+                fill.className = 'skill-fill moderate';
+                level.textContent = 'Moderate';
+            } else {
+                fill.className = 'skill-fill needs-improvement';
+                level.textContent = 'Needs Improvement';
+            }
+        }
+
+        function displayResumePreview(resumeData) {
+            const container = document.getElementById('resumePreviewContainer');
+            const fullName = `${resumeData.personal?.firstName || ''} ${resumeData.personal?.lastName || ''}`.trim();
+
+            if (!fullName) {
+                return; // Keep the "No Resume" message
+            }
+
+            container.innerHTML = `
+                <div style="background: white; padding: 30px; border-radius: 10px; box-shadow: 0 2px 10px rgba(0,0,0,0.1);">
+                    <div style="text-align: center; border-bottom: 3px solid #667eea; padding-bottom: 20px; margin-bottom: 20px;">
+                        <h1 style="font-size: 2em; color: #2c3e50; margin-bottom: 5px;">${fullName.toUpperCase()}</h1>
+                        <p style="font-size: 1.2em; color: #667eea; font-weight: 600;">${resumeData.personal?.profession || 'Professional Title'}</p>
+                        <p style="font-size: 0.9em; color: #666; margin-top: 10px;">
+                            ${resumeData.personal?.email || ''} ${resumeData.personal?.phone ? '• ' + resumeData.personal.phone : ''} 
+                            ${resumeData.personal?.city && resumeData.personal?.country ? '• ' + resumeData.personal.city + ', ' + resumeData.personal.country : ''}
+                        </p>
+                    </div>
+                    
+                    ${resumeData.summary ? `
+                        <div style="margin-bottom: 20px;">
+                            <h3 style="color: #2c3e50; border-bottom: 2px solid #667eea; padding-bottom: 5px; margin-bottom: 10px;">PROFESSIONAL SUMMARY</h3>
+                            <p style="color: #555; line-height: 1.6;">${resumeData.summary}</p>
+                        </div>
+                    ` : ''}
+                    
+                    ${resumeData.experience && resumeData.experience.length > 0 ? `
+                        <div style="margin-bottom: 20px;">
+                            <h3 style="color: #2c3e50; border-bottom: 2px solid #667eea; padding-bottom: 5px; margin-bottom: 10px;">WORK EXPERIENCE</h3>
+                            ${resumeData.experience.map(exp => `
+                                <div style="margin-bottom: 15px;">
+                                    <div style="display: flex; justify-content: space-between;">
+                                        <strong style="color: #2c3e50;">${exp.jobTitle || 'Job Title'}</strong>
+                                        <span style="color: #888; font-size: 0.9em;">${exp.startDate || ''} - ${exp.endDate || 'Present'}</span>
+                                    </div>
+                                    <p style="color: #667eea; margin: 5px 0;">${exp.company || 'Company'}</p>
+                                    <p style="color: #666; font-size: 0.95em;">${exp.description || ''}</p>
+                                </div>
+                            `).join('')}
+                        </div>
+                    ` : ''}
+                    
+                    ${resumeData.skills && resumeData.skills.length > 0 ? `
+                        <div style="margin-bottom: 20px;">
+                            <h3 style="color: #2c3e50; border-bottom: 2px solid #667eea; padding-bottom: 5px; margin-bottom: 10px;">SKILLS</h3>
+                            <div style="display: flex; flex-wrap: wrap; gap: 10px;">
+                                ${resumeData.skills.map(skill => `
+                                    <span style="background: #667eea; color: white; padding: 6px 15px; border-radius: 20px; font-size: 0.9em;">${skill}</span>
+                                `).join('')}
+                            </div>
+                        </div>
+                    ` : ''}
+                </div>
+            `;
+        }
+
+        function toggleSidebar() {
+            document.getElementById('sidebar').classList.toggle('active');
+        }
+
+        // Load data on page load
+        window.addEventListener('DOMContentLoaded', loadResumeData);
+
+        // Animate stats on load
+        window.addEventListener('load', function() {
+            const statValues = document.querySelectorAll('.stat-value');
+            statValues.forEach(stat => {
+                stat.style.animation = 'fadeInUp 0.5s ease';
+            });
+        });
+    </script>
+</body>
+</html>

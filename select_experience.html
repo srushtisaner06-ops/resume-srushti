@@ -1,0 +1,384 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Select Your Experience Level</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 900px;
+            width: 100%;
+            background: white;
+            border-radius: 25px;
+            padding: 50px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            animation: slideIn 0.5s ease;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        h1 {
+            color: #333;
+            text-align: center;
+            margin-bottom: 15px;
+            font-size: 2.5em;
+        }
+
+        .subtitle {
+            text-align: center;
+            color: #666;
+            margin-bottom: 40px;
+            font-size: 1.1em;
+        }
+
+        .experience-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .exp-button {
+            background: linear-gradient(135deg, #f8f9ff 0%, #e8ebff 100%);
+            border: 3px solid transparent;
+            border-radius: 15px;
+            padding: 30px 20px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .exp-button:hover {
+            transform: translateY(-5px);
+            border-color: #667eea;
+            box-shadow: 0 10px 30px rgba(102, 126, 234, 0.3);
+        }
+
+        .exp-button.selected {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border-color: #667eea;
+        }
+
+        .exp-icon {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+        }
+
+        .exp-title {
+            font-weight: 600;
+            font-size: 1.1em;
+            margin-bottom: 5px;
+        }
+
+        .exp-desc {
+            font-size: 0.9em;
+            opacity: 0.8;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.6);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal.active {
+            display: flex;
+        }
+
+        .modal-content {
+            background: white;
+            border-radius: 20px;
+            padding: 40px;
+            max-width: 500px;
+            width: 90%;
+            animation: modalSlide 0.3s ease;
+        }
+
+        @keyframes modalSlide {
+            from {
+                opacity: 0;
+                transform: scale(0.9);
+            }
+            to {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+
+        .modal h2 {
+            color: #333;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .modal-buttons {
+            display: flex;
+            gap: 15px;
+            margin-top: 30px;
+        }
+
+        .modal-button {
+            flex: 1;
+            padding: 15px;
+            border: none;
+            border-radius: 10px;
+            font-size: 1em;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .btn-yes {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .btn-no {
+            background: #f0f0f0;
+            color: #333;
+        }
+
+        .modal-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+
+        .qualification-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+            margin: 20px 0;
+        }
+
+        .qual-button {
+            padding: 15px;
+            background: #f8f9ff;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-align: center;
+            font-weight: 500;
+        }
+
+        .qual-button:hover {
+            border-color: #667eea;
+            background: #e8ebff;
+        }
+
+        .qual-button.selected {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border-color: #667eea;
+        }
+
+        .skip-button {
+            text-align: center;
+            margin-top: 15px;
+            color: #666;
+            cursor: pointer;
+            text-decoration: underline;
+        }
+
+        .skip-button:hover {
+            color: #667eea;
+        }
+
+        .continue-button {
+            display: block;
+            width: 100%;
+            max-width: 300px;
+            margin: 30px auto 0;
+            padding: 18px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 50px;
+            font-size: 1.1em;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 10px 30px rgba(102, 126, 234, 0.3);
+        }
+
+        .continue-button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 15px 40px rgba(102, 126, 234, 0.4);
+        }
+
+        .continue-button:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 30px 20px;
+            }
+
+            h1 {
+                font-size: 1.8em;
+            }
+
+            .experience-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🎯 Select Your Experience Level</h1>
+        <p class="subtitle">Choose the option that best describes your professional background</p>
+
+        <div class="experience-grid">
+            <div class="exp-button" data-exp="no_experience">
+                <div class="exp-icon">🌱</div>
+                <div class="exp-title">No Experience</div>
+                <div class="exp-desc">Just starting out</div>
+            </div>
+            <div class="exp-button" data-exp="less_than_3">
+                <div class="exp-icon">🚀</div>
+                <div class="exp-title">Less Than 3 Years</div>
+                <div class="exp-desc">Early career</div>
+            </div>
+            <div class="exp-button" data-exp="3_to_5">
+                <div class="exp-icon">💼</div>
+                <div class="exp-title">3-5 Years</div>
+                <div class="exp-desc">Mid-level professional</div>
+            </div>
+            <div class="exp-button" data-exp="5_to_10">
+                <div class="exp-icon">⭐</div>
+                <div class="exp-title">5-10 Years</div>
+                <div class="exp-desc">Senior professional</div>
+            </div>
+            <div class="exp-button" data-exp="10_plus">
+                <div class="exp-icon">👑</div>
+                <div class="exp-title">10+ Years</div>
+                <div class="exp-desc">Expert level</div>
+            </div>
+        </div>
+
+        <button class="continue-button" id="continueBtn" disabled>Continue to Templates</button>
+    </div>
+
+    <!-- Student Modal -->
+    <div class="modal" id="studentModal">
+        <div class="modal-content">
+            <h2>Are You Currently a Student?</h2>
+            <div class="modal-buttons">
+                <button class="modal-button btn-yes" id="studentYes">Yes, I'm a Student</button>
+                <button class="modal-button btn-no" id="studentNo">No</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Qualification Modal -->
+    <div class="modal" id="qualificationModal">
+        <div class="modal-content">
+            <h2>What's Your Current Qualification?</h2>
+            <div class="qualification-grid">
+                <div class="qual-button" data-qual="secondary">Secondary School</div>
+                <div class="qual-button" data-qual="higher_secondary">Higher Secondary</div>
+                <div class="qual-button" data-qual="diploma">Diploma</div>
+                <div class="qual-button" data-qual="bachelors">Bachelor's Degree</div>
+                <div class="qual-button" data-qual="masters">Master's Degree</div>
+                <div class="qual-button" data-qual="phd">PhD/Doctorate</div>
+            </div>
+            <div class="skip-button" id="skipQual">Skip this question</div>
+            <button class="modal-button btn-yes" id="qualContinue" style="width: 100%; margin-top: 20px;">Continue</button>
+        </div>
+    </div>
+
+    <script>
+        let selectedExp = null;
+        let selectedQual = null;
+
+        // Experience selection
+        document.querySelectorAll('.exp-button').forEach(btn => {
+            btn.addEventListener('click', function() {
+                document.querySelectorAll('.exp-button').forEach(b => b.classList.remove('selected'));
+                this.classList.add('selected');
+                selectedExp = this.dataset.exp;
+                document.getElementById('continueBtn').disabled = false;
+            });
+        });
+
+        // Continue button
+        document.getElementById('continueBtn').addEventListener('click', async function() {
+            if (selectedExp === 'no_experience' || selectedExp === 'less_than_3') {
+                document.getElementById('studentModal').classList.add('active');
+            } else {
+                window.location.href = '/templates';
+            }
+        });
+
+        // Student Yes button
+        document.getElementById('studentYes').addEventListener('click', function() {
+            document.getElementById('studentModal').classList.remove('active');
+            document.getElementById('qualificationModal').classList.add('active');
+        });
+
+        // Student No button
+        document.getElementById('studentNo').addEventListener('click', function() {
+            document.getElementById('studentModal').classList.remove('active');
+            window.location.href = '/templates';
+        });
+
+        // Qualification selection
+        document.querySelectorAll('.qual-button').forEach(btn => {
+            btn.addEventListener('click', function() {
+                document.querySelectorAll('.qual-button').forEach(b => b.classList.remove('selected'));
+                this.classList.add('selected');
+                selectedQual = this.dataset.qual;
+            });
+        });
+
+        // Skip qualification
+        document.getElementById('skipQual').addEventListener('click', function() {
+            window.location.href = '/templates';
+        });
+
+        // Qualification continue
+        document.getElementById('qualContinue').addEventListener('click', function() {
+            window.location.href = '/templates';
+        });
+    </script>
+</body>
+</html>

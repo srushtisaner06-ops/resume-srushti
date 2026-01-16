@@ -1,0 +1,1077 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Choose Your Template</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #f5f7fa;
+            overflow-x: hidden;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 25px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+        }
+
+        .header h1 {
+            font-size: 2em;
+            margin-bottom: 5px;
+        }
+
+        .header p {
+            opacity: 0.9;
+        }
+
+        .container {
+            display: flex;
+            min-height: calc(100vh - 100px);
+        }
+
+        .sidebar {
+            width: 320px;
+            background: white;
+            padding: 30px 20px;
+            box-shadow: 4px 0 20px rgba(0,0,0,0.08);
+            position: sticky;
+            top: 0;
+            height: calc(100vh - 100px);
+            overflow-y: auto;
+        }
+
+        .filter-section {
+            margin-bottom: 30px;
+        }
+
+        .filter-title {
+            font-size: 1.1em;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .filter-options {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .filter-option {
+            display: flex;
+            align-items: center;
+            padding: 12px 15px;
+            background: #f8f9ff;
+            border: 2px solid transparent;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .filter-option:hover {
+            border-color: #667eea;
+            background: #e8ebff;
+        }
+
+        .filter-option.active {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border-color: #667eea;
+        }
+
+        .filter-option input[type="radio"],
+        .filter-option input[type="checkbox"] {
+            margin-right: 10px;
+            width: 18px;
+            height: 18px;
+            cursor: pointer;
+        }
+
+        .templates-grid {
+            flex: 1;
+            padding: 40px;
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+            gap: 30px;
+            align-content: start;
+        }
+
+        .template-card {
+            background: white;
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 5px 25px rgba(0,0,0,0.1);
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .template-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 15px 40px rgba(102, 126, 234, 0.3);
+        }
+
+        /* Resume Template Previews - Actual Designs */
+        .template-preview {
+            height: 480px;
+            background: white;
+            position: relative;
+            overflow: hidden;
+            border-bottom: 3px solid var(--template-color, #667eea);
+        }
+
+        /* Template 1: Professional Sidebar */
+        .preview-template-1 {
+            display: flex;
+            font-size: 9px;
+        }
+
+        .preview-template-1 .sidebar {
+            width: 35%;
+            background: var(--template-color, #2c3e50);
+            color: white;
+            padding: 20px 15px;
+            position: relative;
+        }
+
+        .preview-template-1 .photo-circle {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            background: rgba(255,255,255,0.2);
+            margin: 0 auto 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 32px;
+        }
+
+        .preview-template-1 .name {
+            font-size: 16px;
+            font-weight: bold;
+            text-align: center;
+            margin-bottom: 5px;
+        }
+
+        .preview-template-1 .job-title {
+            font-size: 11px;
+            text-align: center;
+            opacity: 0.9;
+            margin-bottom: 15px;
+        }
+
+        .preview-template-1 .section-heading {
+            font-size: 11px;
+            font-weight: bold;
+            margin: 15px 0 8px 0;
+            padding-bottom: 5px;
+            border-bottom: 1px solid rgba(255,255,255,0.3);
+        }
+
+        .preview-template-1 .contact-line {
+            font-size: 8px;
+            margin-bottom: 5px;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .preview-template-1 .skill-item {
+            font-size: 8px;
+            margin-bottom: 4px;
+            padding-left: 12px;
+            position: relative;
+        }
+
+        .preview-template-1 .skill-item:before {
+            content: '●';
+            position: absolute;
+            left: 0;
+            font-size: 10px;
+        }
+
+        .preview-template-1 .main-content {
+            width: 65%;
+            padding: 20px 15px;
+        }
+
+        .preview-template-1 .main-content .section-heading {
+            color: var(--template-color, #2c3e50);
+            border-bottom-color: var(--template-color, #2c3e50);
+        }
+
+        .preview-template-1 .summary-text {
+            font-size: 8px;
+            line-height: 1.4;
+            color: #666;
+            margin-bottom: 15px;
+        }
+
+        .preview-template-1 .exp-block {
+            margin-bottom: 12px;
+        }
+
+        .preview-template-1 .exp-title {
+            font-size: 10px;
+            font-weight: bold;
+            color: #2c3e50;
+        }
+
+        .preview-template-1 .exp-company {
+            font-size: 9px;
+            color: var(--template-color, #667eea);
+            margin-bottom: 4px;
+        }
+
+        .preview-template-1 .exp-desc {
+            font-size: 8px;
+            color: #666;
+            line-height: 1.3;
+        }
+
+        /* Template 2: Modern Clean */
+        .preview-template-2 {
+            padding: 20px 15px;
+            font-size: 9px;
+        }
+
+        .preview-template-2 .header {
+            text-align: center;
+            padding-bottom: 15px;
+            border-bottom: 4px solid var(--template-color, #667eea);
+            margin-bottom: 15px;
+        }
+
+        .preview-template-2 .name {
+            font-size: 22px;
+            font-weight: bold;
+            color: #2c3e50;
+            margin-bottom: 5px;
+        }
+
+        .preview-template-2 .job-title {
+            font-size: 13px;
+            color: var(--template-color, #667eea);
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+
+        .preview-template-2 .contact-info {
+            font-size: 8px;
+            color: #666;
+        }
+
+        .preview-template-2 .section-heading {
+            font-size: 12px;
+            font-weight: bold;
+            color: #2c3e50;
+            margin: 15px 0 8px 0;
+            padding-bottom: 5px;
+            border-bottom: 2px solid var(--template-color, #667eea);
+        }
+
+        .preview-template-2 .content-block {
+            margin-bottom: 10px;
+        }
+
+        .preview-template-2 .block-title {
+            font-size: 10px;
+            font-weight: bold;
+            color: #2c3e50;
+        }
+
+        .preview-template-2 .block-subtitle {
+            font-size: 9px;
+            color: var(--template-color, #667eea);
+            margin-bottom: 3px;
+        }
+
+        .preview-template-2 .block-text {
+            font-size: 8px;
+            color: #666;
+            line-height: 1.3;
+        }
+
+        /* Template 3: Creative Two-Column */
+        .preview-template-3 {
+            display: grid;
+            grid-template-columns: 60% 40%;
+            font-size: 9px;
+        }
+
+        .preview-template-3 .left-col {
+            padding: 20px 15px;
+            background: white;
+        }
+
+        .preview-template-3 .right-col {
+            padding: 20px 15px;
+            background: var(--template-color, #f8f9ff);
+        }
+
+        .preview-template-3 .name {
+            font-size: 20px;
+            font-weight: bold;
+            color: var(--template-color, #2c3e50);
+            margin-bottom: 5px;
+        }
+
+        .preview-template-3 .job-title {
+            font-size: 12px;
+            color: #666;
+            margin-bottom: 10px;
+        }
+
+        .preview-template-3 .section-heading {
+            font-size: 11px;
+            font-weight: bold;
+            color: var(--template-color, #2c3e50);
+            margin: 15px 0 8px 0;
+            padding-bottom: 5px;
+            border-bottom: 2px solid var(--template-color, #2c3e50);
+        }
+
+        .preview-template-3 .right-col .section-heading {
+            color: #2c3e50;
+            border-bottom-color: rgba(0,0,0,0.2);
+        }
+
+        /* Template 4: Executive */
+        .preview-template-4 {
+            padding: 20px 15px;
+            font-size: 9px;
+            background: white;
+        }
+
+        .preview-template-4 .header-section {
+            background: var(--template-color, #2c3e50);
+            color: white;
+            padding: 20px;
+            margin: -20px -15px 20px -15px;
+            text-align: center;
+        }
+
+        .preview-template-4 .name {
+            font-size: 24px;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+
+        .preview-template-4 .job-title {
+            font-size: 14px;
+            opacity: 0.95;
+        }
+
+        .preview-template-4 .contact-bar {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            font-size: 8px;
+            margin-top: 10px;
+        }
+
+        .preview-template-4 .section-heading {
+            font-size: 12px;
+            font-weight: bold;
+            color: var(--template-color, #2c3e50);
+            margin: 15px 0 8px 0;
+            padding: 8px 12px;
+            background: rgba(var(--template-color-rgb, 102, 126, 234), 0.1);
+        }
+
+        /* Template 5: Student Friendly */
+        .preview-template-5 {
+            padding: 20px 15px;
+            font-size: 9px;
+        }
+
+        .preview-template-5 .header {
+            background: linear-gradient(135deg, var(--template-color, #667eea) 0%, var(--template-color-dark, #764ba2) 100%);
+            color: white;
+            padding: 20px;
+            margin: -20px -15px 20px -15px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .preview-template-5 .photo {
+            width: 70px;
+            height: 70px;
+            border-radius: 10px;
+            background: rgba(255,255,255,0.2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 30px;
+            flex-shrink: 0;
+        }
+
+        .preview-template-5 .header-text .name {
+            font-size: 18px;
+            font-weight: bold;
+            margin-bottom: 3px;
+        }
+
+        .preview-template-5 .header-text .job-title {
+            font-size: 11px;
+            opacity: 0.95;
+        }
+
+        .preview-template-5 .header-text .contact {
+            font-size: 7px;
+            margin-top: 5px;
+        }
+
+        .preview-template-5 .section-heading {
+            font-size: 11px;
+            font-weight: bold;
+            color: var(--template-color, #667eea);
+            margin: 12px 0 8px 0;
+            padding-bottom: 5px;
+            border-bottom: 2px solid var(--template-color, #667eea);
+        }
+
+        /* Template 6: Corporate Pro */
+        .preview-template-6 {
+            display: flex;
+            font-size: 9px;
+        }
+
+        .preview-template-6 .left-section {
+            width: 40%;
+            background: linear-gradient(180deg, var(--template-color, #2c3e50) 0%, var(--template-color-dark, #1a252f) 100%);
+            color: white;
+            padding: 20px 15px;
+        }
+
+        .preview-template-6 .name {
+            font-size: 18px;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+
+        .preview-template-6 .job-title {
+            font-size: 11px;
+            opacity: 0.9;
+            margin-bottom: 15px;
+        }
+
+        .preview-template-6 .section-heading {
+            font-size: 11px;
+            font-weight: bold;
+            margin: 15px 0 8px 0;
+            padding-bottom: 5px;
+            border-bottom: 1px solid rgba(255,255,255,0.3);
+        }
+
+        .preview-template-6 .right-section {
+            width: 60%;
+            padding: 20px 15px;
+        }
+
+        .preview-template-6 .right-section .section-heading {
+            color: var(--template-color, #2c3e50);
+            border-bottom-color: var(--template-color, #2c3e50);
+        }
+
+        .template-info {
+            padding: 20px;
+        }
+
+        .template-name {
+            font-size: 1.2em;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 8px;
+        }
+
+        .template-desc {
+            color: #666;
+            font-size: 0.9em;
+            margin-bottom: 15px;
+        }
+
+        .template-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-bottom: 15px;
+        }
+
+        .tag {
+            padding: 5px 12px;
+            background: #f0f0f0;
+            border-radius: 20px;
+            font-size: 0.8em;
+            color: #555;
+        }
+
+        .color-palette {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 15px;
+        }
+
+        .color-option {
+            width: 35px;
+            height: 35px;
+            border-radius: 50%;
+            cursor: pointer;
+            border: 3px solid transparent;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .color-option:hover {
+            transform: scale(1.15);
+        }
+
+        .color-option.selected {
+            border-color: #333;
+            box-shadow: 0 0 0 2px white, 0 0 0 5px #333;
+        }
+
+        .select-button {
+            width: 100%;
+            padding: 12px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .select-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        .recommendation-box {
+            background: linear-gradient(135deg, #fff4e6 0%, #ffe8cc 100%);
+            border-left: 4px solid #ff9800;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+
+        .recommendation-box h4 {
+            color: #e65100;
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .recommendation-box p {
+            color: #666;
+            font-size: 0.9em;
+            line-height: 1.5;
+        }
+
+        @media (max-width: 1024px) {
+            .container {
+                flex-direction: column;
+            }
+
+            .sidebar {
+                width: 100%;
+                height: auto;
+                position: relative;
+            }
+
+            .templates-grid {
+                grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>🎨 Choose Your Perfect Template</h1>
+        <p>Select a template and customize it with your preferred color scheme</p>
+    </div>
+
+    <div class="container">
+        <aside class="sidebar">
+            <div class="recommendation-box">
+                <h4>💡 Recommendation</h4>
+                <p id="recommendationText">Based on your experience level, we recommend clean, single-column templates with professional layouts.</p>
+            </div>
+
+            <div class="filter-section">
+                <div class="filter-title">📸 Photo Option</div>
+                <div class="filter-options">
+                    <label class="filter-option active">
+                        <input type="radio" name="photo" value="all" checked>
+                        <span>All Templates</span>
+                    </label>
+                    <label class="filter-option">
+                        <input type="radio" name="photo" value="with">
+                        <span>With Photo</span>
+                    </label>
+                    <label class="filter-option">
+                        <input type="radio" name="photo" value="without">
+                        <span>Without Photo</span>
+                    </label>
+                </div>
+            </div>
+
+            <div class="filter-section">
+                <div class="filter-title">📋 Layout Style</div>
+                <div class="filter-options">
+                    <label class="filter-option active">
+                        <input type="radio" name="columns" value="all" checked>
+                        <span>All Layouts</span>
+                    </label>
+                    <label class="filter-option">
+                        <input type="radio" name="columns" value="1">
+                        <span>Single Column</span>
+                    </label>
+                    <label class="filter-option">
+                        <input type="radio" name="columns" value="2">
+                        <span>Two Columns</span>
+                    </label>
+                </div>
+            </div>
+
+            <div class="filter-section">
+                <div class="filter-title">🎯 Design Style</div>
+                <div class="filter-options">
+                    <label class="filter-option active">
+                        <input type="checkbox" name="style" value="professional" checked>
+                        <span>Professional</span>
+                    </label>
+                    <label class="filter-option">
+                        <input type="checkbox" name="style" value="modern">
+                        <span>Modern</span>
+                    </label>
+                    <label class="filter-option">
+                        <input type="checkbox" name="style" value="creative">
+                        <span>Creative</span>
+                    </label>
+                    <label class="filter-option">
+                        <input type="checkbox" name="style" value="minimal">
+                        <span>Minimal</span>
+                    </label>
+                </div>
+            </div>
+        </aside>
+
+        <main class="templates-grid" id="templatesGrid">
+            <!-- Template 1: Professional Sidebar -->
+            <div class="template-card" data-template="1" data-photo="with" data-columns="2" data-style="professional">
+                <div class="template-preview" style="--template-color: #2c3e50">
+                    <div class="preview-template-1">
+                        <div class="sidebar">
+                            <div class="photo-circle">👤</div>
+                            <div class="name">JOHN DOE</div>
+                            <div class="job-title">Software Engineer</div>
+                            <div class="section-heading">CONTACT</div>
+                            <div class="contact-line">📧 john@email.com</div>
+                            <div class="contact-line">📱 +1 234-567-8900</div>
+                            <div class="contact-line">📍 San Francisco, CA</div>
+                            <div class="section-heading">SKILLS</div>
+                            <div class="skill-item">JavaScript & React</div>
+                            <div class="skill-item">Node.js & Express</div>
+                            <div class="skill-item">Python & Django</div>
+                            <div class="skill-item">SQL & MongoDB</div>
+                            <div class="skill-item">AWS & Docker</div>
+                        </div>
+                        <div class="main-content">
+                            <div class="section-heading">PROFESSIONAL SUMMARY</div>
+                            <div class="summary-text">Results-driven Software Engineer with 5+ years of experience developing scalable web applications. Proven track record in full-stack development and team leadership.</div>
+                            <div class="section-heading">EXPERIENCE</div>
+                            <div class="exp-block">
+                                <div class="exp-title">Senior Software Engineer</div>
+                                <div class="exp-company">Tech Solutions Inc. | Jan 2021 - Present</div>
+                                <div class="exp-desc">Led development of microservices architecture serving 1M+ daily active users</div>
+                            </div>
+                            <div class="exp-block">
+                                <div class="exp-title">Software Developer</div>
+                                <div class="exp-company">Digital Innovations Ltd. | Jun 2019 - Dec 2020</div>
+                                <div class="exp-desc">Developed and maintained 15+ client-facing web applications</div>
+                            </div>
+                            <div class="section-heading">EDUCATION</div>
+                            <div class="exp-block">
+                                <div class="exp-title">BS in Computer Science</div>
+                                <div class="exp-company">University of Technology | 2015 - 2019</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="template-info">
+                    <div class="template-name">Professional Sidebar</div>
+                    <div class="template-desc">Two-column layout with photo, perfect for experienced professionals</div>
+                    <div class="template-tags">
+                        <span class="tag">With Photo</span>
+                        <span class="tag">2 Columns</span>
+                        <span class="tag">Professional</span>
+                    </div>
+                    <div class="color-palette">
+                        <div class="color-option selected" style="background: #2c3e50;" data-color="#2c3e50" onclick="changeTemplateColor(this, 1)"></div>
+                        <div class="color-option" style="background: #667eea;" data-color="#667eea" onclick="changeTemplateColor(this, 1)"></div>
+                        <div class="color-option" style="background: #16a085;" data-color="#16a085" onclick="changeTemplateColor(this, 1)"></div>
+                        <div class="color-option" style="background: #e74c3c;" data-color="#e74c3c" onclick="changeTemplateColor(this, 1)"></div>
+                    </div>
+                    <button class="select-button" onclick="selectTemplate(1)">Use This Template</button>
+                </div>
+            </div>
+
+            <!-- Template 2: Modern Clean -->
+            <div class="template-card" data-template="2" data-photo="without" data-columns="1" data-style="modern">
+                <div class="template-preview" style="--template-color: #667eea">
+                    <div class="preview-template-2">
+                        <div class="header">
+                            <div class="name">SARAH WILLIAMS</div>
+                            <div class="job-title">Marketing Manager</div>
+                            <div class="contact-info">sarah@email.com • +1 234-567-8900 • New York, NY • linkedin.com/in/sarah</div>
+                        </div>
+                        <div class="section-heading">PROFESSIONAL SUMMARY</div>
+                        <div class="block-text">Creative marketing professional with 7+ years driving brand growth and customer engagement through data-driven strategies.</div>
+                        <div class="section-heading">EXPERIENCE</div>
+                        <div class="content-block">
+                            <div class="block-title">Marketing Manager</div>
+                            <div class="block-subtitle">Global Corp | Mar 2020 - Present</div>
+                            <div class="block-text">• Increased brand awareness by 45% through integrated campaigns<br>• Managed $2M annual marketing budget with 120% ROI</div>
+                        </div>
+                        <div class="content-block">
+                            <div class="block-title">Marketing Coordinator</div>
+                            <div class="block-subtitle">StartUp Co | Jan 2018 - Feb 2020</div>
+                            <div class="block-text">• Developed comprehensive social media strategy<br>• Grew social following from 5K to 50K in 18 months</div>
+                        </div>
+                        <div class="section-heading">EDUCATION</div>
+                        <div class="content-block">
+                            <div class="block-title">MBA in Marketing</div>
+                            <div class="block-subtitle">Business School | 2016 - 2018</div>
+                        </div>
+                        <div class="section-heading">SKILLS</div>
+                        <div class="block-text">Digital Marketing • SEO/SEM • Content Strategy • Google Analytics • Social Media Management</div>
+                    </div>
+                </div>
+                <div class="template-info">
+                    <div class="template-name">Modern Clean</div>
+                    <div class="template-desc">Single-column minimal design, ideal for all industries</div>
+                    <div class="template-tags">
+                        <span class="tag">No Photo</span>
+                        <span class="tag">1 Column</span>
+                        <span class="tag">Modern</span>
+                    </div>
+                    <div class="color-palette">
+                        <div class="color-option selected" style="background: #667eea;" data-color="#667eea" onclick="changeTemplateColor(this, 2)"></div>
+                        <div class="color-option" style="background: #f093fb;" data-color="#f093fb" onclick="changeTemplateColor(this, 2)"></div>
+                        <div class="color-option" style="background: #4facfe;" data-color="#4facfe" onclick="changeTemplateColor(this, 2)"></div>
+                        <div class="color-option" style="background: #43e97b;" data-color="#43e97b" onclick="changeTemplateColor(this, 2)"></div>
+                    </div>
+                    <button class="select-button" onclick="selectTemplate(2)">Use This Template</button>
+                </div>
+            </div>
+
+            
+        <!-- Template 4: Executive -->
+        <div class="template-card" data-template="4" data-photo="without" data-columns="1" data-style="professional">
+            <div class="template-preview" style="--template-color: #2c3e50">
+                <div class="preview-template-4">
+                    <div class="header-section">
+                        <div class="name">MICHAEL CHEN</div>
+                        <div class="job-title">Senior Project Manager</div>
+                        <div class="contact-bar">
+                            <span>michael@email.com</span>
+                            <span>•</span>
+                            <span>+1 234-567-8900</span>
+                            <span>•</span>
+                            <span>Seattle, WA</span>
+                        </div>
+                    </div>
+                    <div class="section-heading">PROFESSIONAL SUMMARY</div>
+                    <div class="summary-text">Strategic project manager with 10+ years leading cross-functional teams to deliver complex initiatives on time and under budget.</div>
+                    <div class="section-heading">PROFESSIONAL EXPERIENCE</div>
+                    <div class="exp-block">
+                        <div class="exp-title">Senior Project Manager</div>
+                        <div class="exp-company">Enterprise Solutions Inc. | 2019 - Present</div>
+                        <div class="exp-desc">Managing $5M+ projects with teams of 15-20 members<br>Delivered 12 major projects with 98% client satisfaction</div>
+                    </div>
+                    <div class="exp-block">
+                        <div class="exp-title">Project Manager</div>
+                        <div class="exp-company">Tech Innovations Co. | 2016 - 2019</div>
+                        <div class="exp-desc">Led agile transformation reducing time-to-market by 40%</div>
+                    </div>
+                    <div class="section-heading">EDUCATION & CERTIFICATIONS</div>
+                    <div class="exp-block">
+                        <div class="exp-title">MBA in Business Administration</div>
+                        <div class="exp-company">Business University | 2014 - 2016</div>
+                    </div>
+                    <div class="section-heading">CORE COMPETENCIES</div>
+                    <div class="block-text">Agile & Scrum • Risk Management • Stakeholder Relations • Budget Planning • Team Leadership</div>
+                </div>
+            </div>
+            <div class="template-info">
+                <div class="template-name">Executive Professional</div>
+                <div class="template-desc">Premium design for senior positions and executives</div>
+                <div class="template-tags">
+                    <span class="tag">No Photo</span>
+                    <span class="tag">1 Column</span>
+                    <span class="tag">Professional</span>
+                </div>
+                <div class="color-palette">
+                    <div class="color-option selected" style="background: #2c3e50;" data-color="#2c3e50" onclick="changeTemplateColor(this, 4)"></div>
+                    <div class="color-option" style="background: #34495e;" data-color="#34495e" onclick="changeTemplateColor(this, 4)"></div>
+                    <div class="color-option" style="background: #7f8c8d;" data-color="#7f8c8d" onclick="changeTemplateColor(this, 4)"></div>
+                    <div class="color-option" style="background: #2980b9;" data-color="#2980b9" onclick="changeTemplateColor(this, 4)"></div>
+                </div>
+                <button class="select-button" onclick="selectTemplate(4)">Use This Template</button>
+            </div>
+        </div>
+
+        <!-- Template 5: Student Friendly -->
+        <div class="template-card" data-template="5" data-photo="with" data-columns="1" data-style="minimal">
+            <div class="template-preview" style="--template-color: #3498db; --template-color-dark: #2980b9">
+                <div class="preview-template-5">
+                    <div class="header">
+                        <div class="photo">👤</div>
+                        <div class="header-text">
+                            <div class="name">EMILY DAVIS</div>
+                            <div class="job-title">Computer Science Student</div>
+                            <div class="contact">emily@email.com • +1 234-567-8900 • Boston, MA</div>
+                        </div>
+                    </div>
+                    <div class="section-heading">OBJECTIVE</div>
+                    <div class="summary-text">Enthusiastic computer science student seeking internship opportunities to apply programming skills and gain real-world experience.</div>
+                    <div class="section-heading">EDUCATION</div>
+                    <div class="exp-block">
+                        <div class="exp-title">Bachelor of Science in Computer Science</div>
+                        <div class="exp-company">State University | Expected 2025</div>
+                        <div class="exp-desc">GPA: 3.8/4.0 • Dean's List • Relevant Coursework: Data Structures, Algorithms, Web Development</div>
+                    </div>
+                    <div class="section-heading">PROJECTS</div>
+                    <div class="exp-block">
+                        <div class="exp-title">E-Commerce Website</div>
+                        <div class="exp-desc">Built full-stack application using React and Node.js with 500+ active users</div>
+                    </div>
+                    <div class="exp-block">
+                        <div class="exp-title">Mobile Fitness App</div>
+                        <div class="exp-desc">Developed iOS app using Swift with workout tracking features</div>
+                    </div>
+                    <div class="section-heading">SKILLS</div>
+                    <div class="block-text">Java • Python • JavaScript • React • HTML/CSS • Git • SQL</div>
+                </div>
+            </div>
+            <div class="template-info">
+                <div class="template-name">Student Friendly</div>
+                <div class="template-desc">Perfect for students and entry-level positions</div>
+                <div class="template-tags">
+                    <span class="tag">With Photo</span>
+                    <span class="tag">1 Column</span>
+                    <span class="tag">Minimal</span>
+                </div>
+                <div class="color-palette">
+                    <div class="color-option selected" style="background: #3498db;" data-color="#3498db" onclick="changeTemplateColor(this, 5)"></div>
+                    <div class="color-option" style="background: #1abc9c;" data-color="#1abc9c" onclick="changeTemplateColor(this, 5)"></div>
+                    <div class="color-option" style="background: #9b59b6;" data-color="#9b59b6" onclick="changeTemplateColor(this, 5)"></div>
+                    <div class="color-option" style="background: #e67e22;" data-color="#e67e22" onclick="changeTemplateColor(this, 5)"></div>
+                </div>
+                <button class="select-button" onclick="selectTemplate(5)">Use This Template</button>
+            </div>
+        </div>
+
+        <!-- Template 6: Corporate Pro -->
+        <div class="template-card" data-template="6" data-photo="without" data-columns="2" data-style="modern">
+            <div class="template-preview" style="--template-color: #2c3e50; --template-color-dark: #1a252f">
+                <div class="preview-template-6">
+                    <div class="left-section">
+                        <div class="name">DAVID WILSON</div>
+                        <div class="job-title">Financial Analyst</div>
+                        <div class="section-heading">CONTACT</div>
+                        <div class="contact-line">📧 david@email.com</div>
+                        <div class="contact-line">📱 +1 234-567-8900</div>
+                        <div class="contact-line">📍 Chicago, IL</div>
+                        <div class="section-heading">SKILLS</div>
+                        <div class="skill-item">Financial Modeling</div>
+                        <div class="skill-item">Data Analysis</div>
+                        <div class="skill-item">Excel & SQL</div>
+                        <div class="skill-item">Tableau</div>
+                        <div class="skill-item">Financial Reporting</div>
+                        <div class="section-heading">LANGUAGES</div>
+                        <div class="skill-item">English (Native)</div>
+                        <div class="skill-item">Spanish (Fluent)</div>
+                    </div>
+                    <div class="right-section">
+                        <div class="section-heading">PROFESSIONAL SUMMARY</div>
+                        <div class="summary-text">Detail-oriented financial analyst with 6+ years analyzing complex financial data and providing strategic insights for business growth.</div>
+                        <div class="section-heading">EXPERIENCE</div>
+                        <div class="exp-block">
+                            <div class="exp-title">Senior Financial Analyst</div>
+                            <div class="exp-company">Investment Firm | 2020 - Present</div>
+                            <div class="exp-desc">Analyzing $500M+ portfolio performance and market trends</div>
+                        </div>
+                        <div class="exp-block">
+                            <div class="exp-title">Financial Analyst</div>
+                            <div class="exp-company">Corporate Finance | 2018 - 2020</div>
+                            <div class="exp-desc">Prepared monthly financial reports for C-suite executives</div>
+                        </div>
+                        <div class="section-heading">EDUCATION</div>
+                        <div class="exp-block">
+                            <div class="exp-title">MS in Finance</div>
+                            <div class="exp-company">Business School | 2016 - 2018</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="template-info">
+                <div class="template-name">Corporate Professional</div>
+                <div class="template-desc">Sophisticated design for corporate positions</div>
+                <div class="template-tags">
+                    <span class="tag">No Photo</span>
+                    <span class="tag">2 Columns</span>
+                    <span class="tag">Modern</span>
+                </div>
+                <div class="color-palette">
+                    <div class="color-option selected" style="background: #2c3e50;" data-color="#2c3e50" onclick="changeTemplateColor(this, 6)"></div>
+                    <div class="color-option" style="background: #34495e;" data-color="#34495e" onclick="changeTemplateColor(this, 6)"></div>
+                    <div class="color-option" style="background: #16a085;" data-color="#16a085" onclick="changeTemplateColor(this, 6)"></div>
+                    <div class="color-option" style="background: #27ae60;" data-color="#27ae60" onclick="changeTemplateColor(this, 6)"></div>
+                </div>
+                <button class="select-button" onclick="selectTemplate(6)">Use This Template</button>
+            </div>
+        </div>
+    </main>
+</div>
+
+<script>
+    let selectedColors = {};
+    let selectedTemplateData = {};
+
+    // Filter functionality
+    function filterTemplates() {
+        const photoFilter = document.querySelector('input[name="photo"]:checked').value;
+        const columnsFilter = document.querySelector('input[name="columns"]:checked').value;
+        const styleFilters = Array.from(document.querySelectorAll('input[name="style"]:checked')).map(cb => cb.value);
+
+        const templates = document.querySelectorAll('.template-card');
+        let visibleCount = 0;
+
+        templates.forEach(template => {
+            const photo = template.dataset.photo;
+            const columns = template.dataset.columns;
+            const style = template.dataset.style;
+
+            const photoMatch = photoFilter === 'all' || photoFilter === photo;
+            const columnsMatch = columnsFilter === 'all' || columnsFilter === columns;
+            const styleMatch = styleFilters.length === 0 || styleFilters.includes(style);
+
+            if (photoMatch && columnsMatch && styleMatch) {
+                template.style.display = 'block';
+                visibleCount++;
+            } else {
+                template.style.display = 'none';
+            }
+        });
+
+        if (visibleCount === 0) {
+            const grid = document.getElementById('templatesGrid');
+            if (!document.querySelector('.no-templates')) {
+                const noResults = document.createElement('div');
+                noResults.className = 'no-templates';
+                noResults.style.cssText = 'grid-column: 1 / -1; text-align: center; padding: 40px; color: #666;';
+                noResults.innerHTML = '<h3>😕 No templates match your filters</h3><p>Try adjusting your filter criteria</p>';
+                grid.appendChild(noResults);
+            }
+        } else {
+            const noResults = document.querySelector('.no-templates');
+            if (noResults) noResults.remove();
+        }
+    }
+
+    // Add event listeners to all filters
+    document.querySelectorAll('input[type="radio"], input[type="checkbox"]').forEach(input => {
+        input.addEventListener('change', filterTemplates);
+    });
+
+    // Add active class to filter options
+    document.querySelectorAll('.filter-option').forEach(option => {
+        option.addEventListener('click', function() {
+            const input = this.querySelector('input');
+            if (input.type === 'radio') {
+                this.closest('.filter-options').querySelectorAll('.filter-option').forEach(opt => {
+                    opt.classList.remove('active');
+                });
+                this.classList.add('active');
+            } else {
+                this.classList.toggle('active', input.checked);
+            }
+        });
+    });
+
+    function changeTemplateColor(colorElement, templateId) {
+        const card = colorElement.closest('.template-card');
+        const preview = card.querySelector('.template-preview');
+        const color = colorElement.dataset.color;
+        
+        // Remove selected from all colors in this card
+        card.querySelectorAll('.color-option').forEach(opt => opt.classList.remove('selected'));
+        colorElement.classList.add('selected');
+        
+        // Update template preview color
+        preview.style.setProperty('--template-color', color);
+        
+        // Calculate darker shade for gradient templates
+        const darkerShade = adjustColorBrightness(color, -20);
+        preview.style.setProperty('--template-color-dark', darkerShade);
+        
+        // Store selected color
+        selectedColors[templateId] = color;
+    }
+
+    function adjustColorBrightness(color, amount) {
+        const num = parseInt(color.replace("#",""), 16);
+        const r = Math.max(0, Math.min(255, (num >> 16) + amount));
+        const g = Math.max(0, Math.min(255, (num >> 8 & 0x00FF) + amount));
+        const b = Math.max(0, Math.min(255, (num & 0x0000FF) + amount));
+        return "#" + (0x1000000 + r * 0x10000 + g * 0x100 + b).toString(16).slice(1);
+    }
+
+    function selectTemplate(templateId) {
+        const color = selectedColors[templateId] || getDefaultColor(templateId);
+        selectedTemplateData = {
+            id: templateId,
+            color: color
+        };
+        
+        // Store in session storage for use in next page
+        sessionStorage.setItem('selectedTemplate', JSON.stringify(selectedTemplateData));
+        
+        window.location.href = `/fill-information?template_id=${templateId}&color=${encodeURIComponent(color)}`;
+    }
+
+    function getDefaultColor(templateId) {
+        const defaults = {
+            1: '#2c3e50',
+            2: '#667eea',
+            3: '#9b59b6',
+            4: '#2c3e50',
+            5: '#3498db',
+            6: '#2c3e50'
+        };
+        return defaults[templateId] || '#667eea';
+    }
+
+    // Set initial active states
+    document.querySelectorAll('.filter-option input:checked').forEach(input => {
+        input.closest('.filter-option').classList.add('active');
+    });
+</script>
+</body>
+</html></parameter>
