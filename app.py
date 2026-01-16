@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, jsonify, send_file, session
+from flask import Flask, render_template, request, jsonify, send_file, session, url_for, redirect
 import google.generativeai as genai
 import os
 from datetime import datetime
@@ -7,6 +7,14 @@ from io import BytesIO
 from reportlab.lib.pagesizes import letter
 from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer
 from reportlab.lib.styles import getSampleStyleSheet
+import uuid
+import qrcode
+import os
+
+UPLOAD_VIDEO_DIR = 'static/videos'
+UPLOAD_QR_DIR = 'static/qrcodes'
+os.makedirs(UPLOAD_VIDEO_DIR, exist_ok=True)
+os.makedirs(UPLOAD_QR_DIR, exist_ok=True)
 
 app = Flask(__name__)
 app.secret_key = 'resume_builder_secret'  
@@ -177,14 +185,10 @@ def spell_check():
         
 @app.route('/preview-resume')
 def preview_resume():
-    # Retrieve the saved data from the session
     resume_data = session.get('resume_data', {})
     template_id = session.get('template_id', 'template1')
-    
-    # Render the preview page with the actual data
-    return render_template('preview_resume.html', 
-                           resume_data=resume_data, 
-                           template_id=template_id)
+    return render_template('preview_resume.html', resume_data=resume_data, template_id=template_id)
+
 
 @app.route('/download-pdf')
 def download_pdf():
@@ -235,6 +239,49 @@ def analyze():
         return jsonify({'success': True, 'analysis': analysis})
     except Exception as e:
         return jsonify({'success': False, 'error': str(e)})
+    
+@app.route('/upload-video')
+def upload_video():
+    return render_template('upload_video.html')
+
+@app.route('/handle-video-upload', methods=['POST'])
+def handle_video_upload():
+    if 'video_file' not in request.files:
+        return redirect(url_for('upload_video'))
+    
+    file = request.files['video_file']
+    if file.filename == '':
+        return redirect(url_for('upload_video'))
+
+    # 1. Save Video
+    unique_id = str(uuid.uuid4())
+    video_filename = f"{unique_id}_{file.filename}"
+    video_path = os.path.join(UPLOAD_VIDEO_DIR, video_filename)
+    file.save(video_path)
+
+    # 2. Create Video URL
+    video_url = f"{request.host_url}static/videos/{video_filename}"
+
+    # 3. Generate QR Code
+    qr = qrcode.QRCode(version=1, box_size=10, border=5)
+    qr.add_data(video_url)
+    qr.make(fit=True)
+    qr_img = qr.make_image(fill_color="black", back_color="white")
+    
+    qr_filename = f"qr_{unique_id}.png"
+    qr_save_path = os.path.join(UPLOAD_QR_DIR, qr_filename)
+    qr_img.save(qr_save_path)
+    
+    qr_web_path = f"/static/qrcodes/{qr_filename}"
+
+    # 4. Save to Session
+    resume_data = session.get('resume_data', {})
+    if 'heading' not in resume_data:
+        resume_data['heading'] = {}
+    resume_data['heading']['video_qr'] = qr_web_path
+    session['resume_data'] = resume_data
+
+    return render_template('upload_video.html', qr_path=qr_web_path)
 
 if __name__ == '__main__':
     app.run(debug=True)

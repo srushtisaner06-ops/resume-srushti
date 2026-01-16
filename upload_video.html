@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Video Introduction - MySmartPortal</title>
+    <style>
+        :root {
+            --primary-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            --glass-white: rgba(255, 255, 255, 0.95);
+            --shadow: 0 10px 40px rgba(0,0,0,0.1);
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: var(--primary-gradient);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .upload-card {
+            background: var(--glass-white);
+            max-width: 600px;
+            width: 100%;
+            padding: 40px;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.2);
+            text-align: center;
+            animation: slideUp 0.6s ease;
+        }
+
+        @keyframes slideUp {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        h1 { color: #4a5568; margin-bottom: 10px; font-size: 2em; }
+        p.subtitle { color: #718096; margin-bottom: 30px; line-height: 1.6; }
+
+        .drop-zone {
+            border: 2px dashed #cbd5e0;
+            border-radius: 15px;
+            padding: 40px 20px;
+            transition: all 0.3s ease;
+            background: #f8fafc;
+            cursor: pointer;
+            margin-bottom: 25px;
+        }
+
+        .drop-zone:hover {
+            border-color: #667eea;
+            background: #f0f4ff;
+        }
+
+        .upload-icon { font-size: 3em; margin-bottom: 15px; display: block; }
+
+        input[type="file"] { margin-bottom: 20px; width: 100%; }
+
+        .btn-primary {
+            background: var(--primary-gradient);
+            color: white;
+            border: none;
+            padding: 15px 35px;
+            border-radius: 10px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.2s;
+            width: 100%;
+            font-size: 1.1em;
+        }
+
+        .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4); }
+
+        .qr-result {
+            margin-top: 30px;
+            padding-top: 30px;
+            border-top: 1px solid #e2e8f0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .qr-image {
+            width: 180px;
+            height: 180px;
+            padding: 10px;
+            background: white;
+            border: 1px solid #edf2f7;
+            border-radius: 12px;
+            margin-bottom: 15px;
+        }
+
+        .back-link {
+            display: inline-block;
+            margin-top: 20px;
+            color: #667eea;
+            text-decoration: none;
+            font-weight: 500;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="upload-card">
+        <h1>🎥 Video Introduction</h1>
+        <p class="subtitle">Personalize your resume with a video. We'll generate a scannable QR code that leads recruiters directly to your intro!</p>
+
+        <form action="/handle-video-upload" method="POST" enctype="multipart/form-data">
+            <div class="drop-zone">
+                <span class="upload-icon">📁</span>
+                <p>Select your MP4 or MOV file</p>
+                <input type="file" name="video_file" accept="video/*" required>
+            </div>
+            
+            <button type="submit" class="btn-primary">Generate Video QR Code</button>
+        </form>
+
+        {% if qr_path %}
+        <div class="qr-result">
+            <img src="{{ qr_path }}" alt="QR Code" class="qr-image">
+            <p style="color: #2d3748; font-weight: 600;">Success! QR Code Generated</p>
+            <p style="color: #718096; font-size: 0.9em;">This has been automatically added to your resume preview.</p>
+        </div>
+        {% endif %}
+
+        <a href="/" class="back-link">← Back to Dashboard</a>
+    </div>
+
+</body>
+</html>

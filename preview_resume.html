@@ -564,17 +564,38 @@
         </div>
     </aside>
 
-    <main class="main-preview">
-        <div class="resume-container" id="resumeContainer">
-            <div class="resume-header" id="header">
-                <h1 class="editable" contenteditable="true">{{ resume_data.heading.first_name }} {{ resume_data.heading.last_name }}</h1>
-                <div class="title editable" contenteditable="true">{{ resume_data.heading.profession }}</div>
-                <div class="contact-info">
-                    <span class="contact-item">📧 {{ resume_data.heading.email }}</span>
-                    <span class="contact-item">📱 {{ resume_data.heading.phone }}</span>
-                    <span class="contact-item">📍 {{ resume_data.heading.city }}, {{ resume_data.heading.country }}</span>
-                    <span class="contact-item">🔗 linkedin.com/in/johndoe</span>
+       <main class="main-preview">
+            <div class="resume-container" id="resumeContainer">
+                <div class="resume-header" id="header" style="position: relative;">
+            
+                    <div class="header-main-info">
+                        <h1 class="editable" contenteditable="true">
+                        {{ resume_data.heading.first_name|default('First Name') }} 
+                        {{ resume_data.heading.last_name|default('Last Name') }}
+                    </h1>
+                
+                    <div class="title editable" contenteditable="true">
+                        {{ resume_data.heading.profession|default('Your Profession') }}
+                    </div>
+
+                    <div class="contact-info">
+                        <span class="contact-item">📧 {{ resume_data.heading.email|default('email@example.com') }}</span>
+                        <span class="contact-item">📱 {{ resume_data.heading.phone|default('Phone Number') }}</span>
+                        <span class="contact-item">📍 {{ resume_data.heading.city|default('City') }}, {{ resume_data.heading.country|default('Country') }}</span>
+                    
+                        {% if resume_data.heading.linkedin %}
+                        <span class="contact-item">🔗 {{ resume_data.heading.linkedin }}</span>
+                        {% endif %}
+                    </div>
                 </div>
+
+                {% if resume_data.heading.video_qr %}
+                <div class="video-qr-code" style="position: absolute; top: 0; right: 0; text-align: center;">
+                    <img src="{{ resume_data.heading.video_qr }}" style="width: 80px; height: 80px; border: 1px solid #eee; padding: 5px; background: white;">
+                    <p style="font-size: 8px; margin: 5px 0 0 0; color: #666; font-weight: bold;">SCAN TO WATCH INTRO</p>
+                </div>
+                {% endif %}
+
             </div>
 
             <div class="resume-section" id="summary">
@@ -588,26 +609,24 @@
 
             <div class="resume-section" id="experience">
                 <h2 class="section-title">Work Experience</h2>
-                {% if resume_data.experience %}
-                    {% for job in resume_data.experience %}  
                 
-                    <div class="experience-item">
-                        <div class="item-header">
-                            <div>
-                                <div class="item-title editable" contenteditable="true">{{ job.position }}</div>
-                                <div class="item-subtitle editable" contenteditable="true">{{ job.company }}</div>
-                            </div>
-                            <div class="item-date">{{ job.start_date }} - {{ job.end_date if not job.currently_work else 'Present' }}</div>
+                <div class="experience-item">
+                    <div class="item-header">
+                        <div>
+                            <div class="item-title editable" contenteditable="true">Senior Software Engineer</div>
+                            <div class="item-subtitle editable" contenteditable="true">Tech Solutions Inc.</div>
                         </div>
-                        <div class="item-description editable" contenteditable="true">
-                            {{ job.description | safe }}
-                        </div>
+                        <div class="item-date editable" contenteditable="true">Jan 2021 - Present</div>
                     </div>
-            {% endfor %}
-        {% else %}
-            <p>No experience added yet.</p>
-        {% endif %}
-    </div>
+                    <div class="item-description editable" contenteditable="true">
+                        <ul>
+                            <li>Led development of microservices architecture serving 1M+ daily active users</li>
+                            <li>Improved application performance by 40% through code optimization and caching strategies</li>
+                            <li>Mentored team of 5 junior developers and conducted code reviews</li>
+                            <li>Implemented CI/CD pipelines reducing deployment time by 60%</li>
+                        </ul>
+                    </div>
+                </div>
 
                 <div class="experience-item">
                     <div class="item-header">
@@ -630,37 +649,33 @@
 
             <div class="resume-section" id="education">
                 <h2 class="section-title">Education</h2>
-                {% for edu in resume_data.education %}
-                    {% for edu in resume_data.education %}
                 
-                    <div class="education-item">
-                        <div class="item-header">
-                            <div>
-                                <div class="item-title editable" contenteditable="true">{{ edu.degree }}</div>
-                                <div class="item-subtitle editable" contenteditable="true">{{ edu.school }}, {{ edu.city }}</div>
-                            </div>
-                            <div class="item-date">{{ edu.graduation_date }}</div>
+                <div class="education-item">
+                    <div class="item-header">
+                        <div>
+                            <div class="item-title editable" contenteditable="true">Bachelor of Science in Computer Science</div>
+                            <div class="item-subtitle editable" contenteditable="true">University of Technology</div>
                         </div>
-                        <div class="item-description editable" contenteditable="true">
-                            GPA: 3.8/4.0 | Dean's List | Relevant Coursework: Data Structures, Algorithms, Web Development
-                        </div>
+                        <div class="item-date editable" contenteditable="true">2015 - 2019</div>
                     </div>
-                    {% endfor %}
-                {% else %}
-                    <p>No education added yet.</p>
-                {% endif %}
+                    <div class="item-description editable" contenteditable="true">
+                        GPA: 3.8/4.0 | Dean's List | Relevant Coursework: Data Structures, Algorithms, Web Development
+                    </div>
+                </div>
             </div>
 
             <div class="resume-section" id="skills">
                 <h2 class="section-title">Technical Skills</h2>
                 <div class="skills-grid">
-                    {% for skill in resume_data.skills %}
-                        {% for skill in resume_data.skills %}
-                        <div class="skill-item editable" contenteditable="true">{{ skill }}</div>
-                        {% endfor %}
-                    {% else %}
-                        <p>No skills added yet.</p>
-                    {% endif %}
+                    <div class="skill-item">JavaScript</div>
+                    <div class="skill-item">React.js</div>
+                    <div class="skill-item">Node.js</div>
+                    <div class="skill-item">Python</div>
+                    <div class="skill-item">SQL</div>
+                    <div class="skill-item">MongoDB</div>
+                    <div class="skill-item">AWS</div>
+                    <div class="skill-item">Docker</div>
+                    <div class="skill-item">Git</div>
                 </div>
             </div>
         </div>
